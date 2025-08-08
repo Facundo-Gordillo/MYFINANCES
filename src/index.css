@@ -1,0 +1,103 @@
+/*
+   ======================================
+   RESET CSS - Elimina estilos predeterminados del navegador
+   ======================================
+*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/*
+   ======================================
+   PALETA DE COLORES - MODO CLARO
+   ======================================
+   Variables por defecto (modo claro)
+*/
+:root {
+    --primary-color: #5b21b6;
+    --primary-light-color: #7c3aed;
+    --secondary-color: #fca5a5;
+    --background-color: #f3f4f6;
+    --card-background-color: #ffffff;
+    --text-color: #1f2937;
+    --text-color-light: #6b7280;
+    --input-border-color: #e5e7eb;
+    --box-shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/*
+   ======================================
+   PALETA DE COLORES - MODO OSCURO
+   ======================================
+   Redefine las variables dentro de la clase .dark-mode
+*/
+.dark-mode {
+    --primary-color: #a78bfa;
+    --primary-light-color: #c4b5fd;
+    --secondary-color: #93c5fd;
+    --background-color: #111827; /* Fondo más oscuro */
+    --card-background-color: #1f2937; /* Tarjeta más oscura */
+    --text-color: #f8fafc; /* Blanco muy claro */
+    --text-color-light: #94a3b8; /* Gris claro */
+    --input-border-color: #475569;
+    --box-shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+/*
+   ======================================
+   ESTILOS BASE (para toda la aplicación)
+   ======================================
+*/
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease; /* Suaviza la transición del color de fondo */
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * Esta es la solución. Ahora el contenedor principal se centra
+ * a sí mismo y a su contenido, que será el componente Home o Login.
+ */
+#root {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/*
+   ======================================
+   ESTILOS DEL BOTÓN DE MODO OSCURO
+   ======================================
+*/
+.dark-mode-toggle {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--card-background-color);
+    border: 1px solid var(--input-border-color);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode-toggle:hover {
+    background: var(--background-color);
+}

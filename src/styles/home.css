@@ -1,0 +1,49 @@
+/*
+    ======================================
+    Estilos para el Botón Flotante Adaptativo
+    ======================================
+*/
+.floating-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+
+    /* Estilo del botón */
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px var(--box-shadow-color);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.floating-button:hover {
+    background-color: var(--primary-light-color);
+    transform: scale(1.1);
+}
+
+/* Efecto al hacer clic */
+.floating-button:active {
+    background-color: var(--primary-light-color);
+    transform: scale(1.05);
+}
+
+/* ======================================
+    Adaptación para pantallas más pequeñas
+    ======================================
+*/
+@media (max-width: 600px) {
+    .floating-button {
+        bottom: 1rem;
+        right: 1rem;
+        width: 50px;
+        height: 50px;
+    }
+}

@@ -1,0 +1,118 @@
+/*
+    ======================================
+    ESTILOS DEL COMPONENTE DE LOGIN
+    ======================================
+*/
+.login-card {
+    background-color: var(--card-background-color);
+    box-shadow: 0 10px 15px -3px var(--box-shadow-color), 0 4px 6px -2px var(--box-shadow-color);
+    border-radius: 1rem;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 28rem; /* 448px */
+}
+
+.login-title {
+    font-size: 1.875rem; /* 30px */
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: var(--text-color-light);
+    margin-bottom: 2rem;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* 24px */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.form-input {
+    border: 1px solid var(--input-border-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-light-color);
+    box-shadow: 0 0 0 2px var(--primary-light-color);
+}
+
+.forgot-password {
+    text-align: center;
+    font-size: 0.875rem; /* 14px */
+}
+
+.forgot-password-link {
+    font-weight: 500;
+    color: var(--text-color-light);
+    transition: color 0.3s ease;
+}
+
+.forgot-password-link:hover {
+    color: var(--primary-light-color);
+}
+
+.login-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    width: 100%;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: var(--primary-light-color);
+}
+
+.signup-text {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.875rem; /* 14px */
+    color: var(--text-color-light);
+}
+
+.signup-link {
+    font-weight: 500;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.signup-link:hover {
+    color: var(--primary-light-color);
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #fee2e2;
+    border: 1px solid #fca5a5;
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
