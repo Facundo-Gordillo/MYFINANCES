@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Plus } from 'lucide-react';
+import { Moon, Sun, Plus, Menu } from 'lucide-react';
 import '../styles/home.css';
 import AddTransaction from './addTransaction.jsx';
 
@@ -10,10 +10,10 @@ const ThemeToggleIcon = ({ isDarkMode }) => {
 
 
 
-// Componente para el botón flotante.
-const FloatingButton = ({ onClick }) => {
+// Componente para el botón flotante de .
+const AddTransactionButton = ({ onClick }) => {
     return (
-        <button className="floating-button" onClick={onClick}>
+        <button className="AddTransaction-button" onClick={onClick}>
             <Plus size={24} />
         </button>
     );
@@ -103,7 +103,7 @@ function Home() {
 
 
                     {/* Renderizar flotante para agregar transacciones */}
-                    <FloatingButton onClick={handleAddTransactionClick} />
+                    <AddTransactionButton onClick={handleAddTransactionClick} />
                 </>
             )}
         </div>

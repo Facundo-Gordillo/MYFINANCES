@@ -1,5 +1,5 @@
 /* Estilos para el Botón Flotante Adaptativo */
-.floating-button {
+.AddTransaction-button {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
@@ -20,20 +20,20 @@
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.floating-button:hover {
+.AddTransaction-button:hover {
     background-color: var(--primary-light-color);
     transform: scale(1.1);
 }
 
 /* Efecto al hacer clic */
-.floating-button:active {
+.AddTransaction-button:active {
     background-color: var(--primary-light-color);
     transform: scale(1.05);
 }
 
 /* Adaptación para pantallas más pequeñas */
 @media (max-width: 600px) {
-    .floating-button {
+    .AddTransaction-button {
         bottom: 1rem;
         right: 1rem;
         width: 50px;
