@@ -11,7 +11,7 @@ const auth = getAuth(appFirebase);
 // Componente para iconos
 const ThemeToggleIcon = ({ isDarkMode }) => {
     if (isDarkMode) {
-        return <Sun />;
+        return <Sun color="orange"/>;
     }
     return <Moon />;
 };

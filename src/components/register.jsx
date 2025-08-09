@@ -7,7 +7,7 @@ import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 // Componente para iconos
 const ThemeToggleIcon = ({ isDarkMode }) => {
     if (isDarkMode) {
-        return <Sun />;
+        return <Sun color="orange"/>;
     }
     return <Moon />;
 };

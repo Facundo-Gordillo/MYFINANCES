@@ -1,0 +1,54 @@
+.barra-lateral {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: var(--card-background-color);
+  color: var(--text-color);
+  box-shadow: 2px 0 8px var(--box-shadow-color);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  animation: slideInLeft 0.3s ease forwards;
+  z-index: 1000;
+}
+
+.cerrar-btn {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.sidebar-nav {
+  margin-top: 2rem;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 0.5rem 0;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.sidebar-link:hover {
+  color: var(--primary-light-color);
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

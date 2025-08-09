@@ -1,86 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Plus, Menu } from 'lucide-react';
-import '../styles/home.css';
-import AddTransaction from './addTransaction.jsx';
+import React, { useState, useEffect } from "react";
+import { Moon, Sun, Plus, Menu } from "lucide-react";
+import "../styles/home.css";
+import AddTransaction from "./addTransaction.jsx";
+import BarraLateral from "./barraLateral.jsx";
 
-// Componente para iconos
-const ThemeToggleIcon = ({ isDarkMode }) => {
-    return isDarkMode ? <Sun /> : <Moon />;
-};
+// Botón flotante para agregar transacciones
+const AddTransactionButton = ({ onClick }) => (
+    <button className="floating-button add-transaction-button" onClick={onClick}>
+        <Plus size={24} />
+    </button>
+);
 
+// Botón para abrir barra lateral (solo visible si barra cerrada)
+const BarraLateralButton = ({ onClick }) => (
+    <button className="floating-button barra-lateral-button" onClick={onClick}>
+        <Menu size={24} />
+    </button>
+);
 
-
-// Componente para el botón flotante de .
-const AddTransactionButton = ({ onClick }) => {
-    return (
-        <button className="AddTransaction-button" onClick={onClick}>
-            <Plus size={24} />
-        </button>
-    );
-};
-
-
+// Icono Dark/Light mode
+const ThemeToggleIcon = ({ isDarkMode }) => (isDarkMode ? <Sun color="orange"/> : <Moon />);
 
 function Home() {
-    // ======================================
-    // LÓGICA PARA DARKMODE
-    // ======================================
+    // Dark Mode state
     const [isDarkMode, setIsDarkMode] = useState(() => {
         try {
-            const savedMode = localStorage.getItem('isDarkMode');
-            return savedMode ? JSON.parse(savedMode) : false;
-        } catch (error) {
-            console.error("Error al acceder a localStorage:", error);
+            const saved = localStorage.getItem("isDarkMode");
+            return saved ? JSON.parse(saved) : false;
+        } catch {
             return false;
         }
     });
 
     useEffect(() => {
-        localStorage.setItem('isDarkMode', JSON.stringify(isDarkMode));
-
-        if (isDarkMode) {
-            document.body.classList.add('dark-mode');
-        } else {
-            document.body.classList.remove('dark-mode');
-        }
+        localStorage.setItem("isDarkMode", JSON.stringify(isDarkMode));
+        document.body.classList.toggle("dark-mode", isDarkMode);
     }, [isDarkMode]);
 
-    const toggleDarkMode = () => {
-        setIsDarkMode(prevMode => !prevMode);
-    };
+    const toggleDarkMode = () => setIsDarkMode((prev) => !prev);
 
-    // ======================================
-    // ESTRUCTURA PARA EL MANEJO DE EVENTOS DEL BOTÓN FLOTANTE
-    // ======================================
+    // Estados AddTransaction y Barra Lateral
     const [showAddTransaction, setShowAddTransaction] = useState(false);
-
-    // Función para cambiar el estado a 'true' y mostrar el componente.
-    const handleAddTransactionClick = () => {
-        setShowAddTransaction(true);
-    };
-
-
-    // Función para volver a Home cuando se haya completado una acción..
-    const handleGoBack = () => {
-        setShowAddTransaction(false);
-    };
-
+    const [showBarraLateral, setShowBarraLateral] = useState(false);
 
     return (
         <div className="home-container">
-            {/* Renderizado condicional */}
             {showAddTransaction ? (
                 <AddTransaction
-                    onTransactionAdded={handleGoBack} // Si showAddTransaction es true, muestra el componente AddTransaction.
-                    onCancel={handleGoBack}// Pasa onCancel a addTransacion, y vuelve al home si se utiliza onCancel.
-                /> 
-
-            ) : ( // Si es false, muestra el contenido normal de Home.
+                    onTransactionAdded={() => setShowAddTransaction(false)}
+                    onCancel={() => setShowAddTransaction(false)}
+                />
+            ) : (
                 <>
                     <header className="home-header">
                         <h1 className="home-title">Resumen de Gastos</h1>
-
-                        {/* Renderizar botón Darkmode */}
                         <button
                             onClick={toggleDarkMode}
                             className="dark-mode-toggle"
@@ -90,20 +63,21 @@ function Home() {
                         </button>
                     </header>
 
-
-
-                    {/* Renderizar contenido home */}
                     <main className="home-main">
-                        {/* Por ejemplo, un gráfico o una lista de gastos */}
                         <p>Contenido de la página Home...</p>
                     </main>
 
+                    <AddTransactionButton onClick={() => setShowAddTransaction(true)} />
 
+                    {/* Mostrar botón solo si barra lateral está cerrada */}
+                    {!showBarraLateral && (
+                        <BarraLateralButton onClick={() => setShowBarraLateral(true)} />
+                    )}
 
-
-
-                    {/* Renderizar flotante para agregar transacciones */}
-                    <AddTransactionButton onClick={handleAddTransactionClick} />
+                    {/* Mostrar barra lateral solo si está abierta */}
+                    {showBarraLateral && (
+                        <BarraLateral onClose={() => setShowBarraLateral(false)} />
+                    )}
                 </>
             )}
         </div>
