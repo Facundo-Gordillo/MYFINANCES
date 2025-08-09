@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Moon, Sun, Plus } from 'lucide-react';
-import '../styles/home.css'; // Archivo CSS para los estilos de la vista Home
-import '../styles/home.css'; // Importa los estilos del botón flotante
+import '../styles/home.css';
+import AddTransaction from './addTransaction.jsx';
 
 // Componente para iconos
 const ThemeToggleIcon = ({ isDarkMode }) => {
@@ -10,10 +10,7 @@ const ThemeToggleIcon = ({ isDarkMode }) => {
 
 
 
-
-
-
-// Componente para el botón flotante. VA A SER UN ARCIHVO SEARADO!! SE COLOCA SOLO PARA QUE FUNCIONE
+// Componente para el botón flotante.
 const FloatingButton = ({ onClick }) => {
     return (
         <button className="floating-button" onClick={onClick}>
@@ -21,9 +18,6 @@ const FloatingButton = ({ onClick }) => {
         </button>
     );
 };
-
-
-
 
 
 
@@ -64,24 +58,28 @@ function Home() {
     const handleAddTransactionClick = () => {
         setShowAddTransaction(true);
     };
-    // Función para volver a Home cuando se haya completado la acción.
+
+
+    // Función para volver a Home cuando se haya completado una acción..
     const handleGoBack = () => {
         setShowAddTransaction(false);
     };
-
 
 
     return (
         <div className="home-container">
             {/* Renderizado condicional */}
             {showAddTransaction ? (
-                <AddTransaction onTransactionAdded={handleGoBack} /> // Si showAddTransaction es true, muestra el componente AddTransaction.
+                <AddTransaction
+                    onTransactionAdded={handleGoBack} // Si showAddTransaction es true, muestra el componente AddTransaction.
+                    onCancel={handleGoBack}// Pasa onCancel a addTransacion, y vuelve al home si se utiliza onCancel.
+                /> 
 
             ) : ( // Si es false, muestra el contenido normal de Home.
                 <>
                     <header className="home-header">
                         <h1 className="home-title">Resumen de Gastos</h1>
-                        
+
                         {/* Renderizar botón Darkmode */}
                         <button
                             onClick={toggleDarkMode}

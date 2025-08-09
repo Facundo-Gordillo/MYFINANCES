@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import './add-transaction.css';
+import appFirebase from '../firebaseConfig'; // Importamos tu configuración de Firebase
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import '../styles/addTransaction.css'
 
 function AddTransaction({ onCancel }) {
     // ======================================
@@ -22,45 +22,37 @@ function AddTransaction({ onCancel }) {
     // INICIALIZACIÓN Y AUTENTICACIÓN DE FIREBASE
     // ======================================
     useEffect(() => {
-        const initFirebase = async () => {
-            try {
-                // Variables globales proporcionadas por el entorno de Canvas
-                const firebaseConfig = JSON.parse(__firebase_config);
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        try {
+            // Inicializamos Firestore y Auth usando tu objeto appFirebase
+            const firestoreDb = getFirestore(appFirebase);
+            const firebaseAuth = getAuth(appFirebase);
 
-                // Inicializar Firebase
-                const app = initializeApp(firebaseConfig);
-                const firestoreDb = getFirestore(app);
-                const firebaseAuth = getAuth(app);
+            setDb(firestoreDb);
+            setAuth(firebaseAuth);
 
-                setDb(firestoreDb);
-                setAuth(firebaseAuth);
-
-                // Autenticar al usuario con el token provisto
-                if (typeof __initial_auth_token !== 'undefined') {
-                    await signInWithCustomToken(firebaseAuth, __initial_auth_token);
+            // Suscribirse a los cambios de autenticación
+            // Esta es la clave: solo procedemos si hay un "user"
+            const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
+                if (user) {
+                    setUserId(user.uid);
+                    setIsLoading(false); // El usuario está logueado, se puede mostrar la app
                 } else {
-                    await signInAnonymously(firebaseAuth);
+                    setUserId(null);
+                    setIsLoading(false); // No hay usuario, mostramos un mensaje o redireccionamos
+                    // Aquí podrías agregar una redirección a la página de login
+                    // console.log("Usuario no autenticado, redirigiendo al login...");
                 }
+            });
 
-                // Escuchar los cambios en el estado de autenticación
-                onAuthStateChanged(firebaseAuth, (user) => {
-                    if (user) {
-                        setUserId(user.uid);
-                    } else {
-                        setUserId(null);
-                    }
-                    setIsLoading(false);
-                });
-            } catch (error) {
-                console.error("Error al inicializar Firebase:", error);
-                setIsLoading(false);
-            }
-        };
-
-        initFirebase();
+            // Limpiar la suscripción al desmontar el componente
+            return () => unsubscribe();
+        } catch (error) {
+            console.error("Error al inicializar Firebase:", error);
+            setIsLoading(false);
+        }
     }, []);
 
+    // Maneja los cambios en los campos del formulario
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevData => ({
@@ -75,22 +67,21 @@ function AddTransaction({ onCancel }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
+        // Verifica si el usuario está logueado antes de intentar guardar
         if (!db || !userId) {
-            console.error("Firebase no está inicializado o el usuario no está autenticado.");
+            console.error("No se puede guardar: El usuario no está autenticado.");
             return;
         }
 
         try {
             // Referencia a la colección donde se guardarán las transacciones.
-            // Sigue las reglas de seguridad: /artifacts/{appId}/users/{userId}/transactions
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const collectionPath = `/artifacts/${appId}/users/${userId}/transactions`;
-            const transactionsCollection = collection(db, collectionPath);
+            // La ruta es específica de cada usuario.
+            const transactionsCollection = collection(db, `users/${userId}/transactions`);
 
             // Añadir un nuevo documento a la colección con los datos del formulario y una marca de tiempo
             await addDoc(transactionsCollection, {
                 ...formData,
-                timestamp: new Date()
+                timestamp: serverTimestamp() // Usamos serverTimestamp para mayor precisión
             });
 
             console.log("Transacción guardada exitosamente en Firestore!");
@@ -102,11 +93,20 @@ function AddTransaction({ onCancel }) {
         }
     };
 
-    // Mostrar un estado de carga mientras se inicializa Firebase
+    // ======================================
+    // RENDERIZADO CONDICIONAL
+    // ======================================
+    // Mientras se verifica el estado de login, muestra un mensaje de carga.
     if (isLoading) {
-        return <div className="add-transaction-container text-center py-8">Cargando...</div>;
+        return <div className="add-transaction-container text-center py-8">Verificando sesión...</div>;
     }
 
+    // Si el usuario no está logueado, muestra un mensaje
+    if (!userId) {
+        return <div className="add-transaction-container text-center py-8">Debes iniciar sesión para añadir transacciones.</div>;
+    }
+
+    // Si el usuario está logueado, muestra el formulario
     return (
         <div className="add-transaction-container">
             <h2 className="form-title">Añadir Transacción</h2>

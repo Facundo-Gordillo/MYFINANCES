@@ -1,8 +1,4 @@
-/*
-    ======================================
-    Estilos para el Botón Flotante Adaptativo
-    ======================================
-*/
+/* Estilos para el Botón Flotante Adaptativo */
 .floating-button {
     position: fixed;
     bottom: 2rem;
@@ -35,10 +31,7 @@
     transform: scale(1.05);
 }
 
-/* ======================================
-    Adaptación para pantallas más pequeñas
-    ======================================
-*/
+/* Adaptación para pantallas más pequeñas */
 @media (max-width: 600px) {
     .floating-button {
         bottom: 1rem;
