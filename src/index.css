@@ -16,8 +16,8 @@
    Variables por defecto (modo claro)
 */
 :root {
-    --primary-color: #5b21b6;
-    --primary-light-color: #7c3aed;
+    --primary-color: #9554ff;
+    --primary-light-color: #c4b5fd;
     --secondary-color: #fca5a5;
     --background-color: #f3f4f6;
     --card-background-color: #ffffff;
@@ -34,7 +34,7 @@
    Redefine las variables dentro de la clase .dark-mode
 */
 .dark-mode {
-    --primary-color: #a78bfa;
+    --primary-color: #6540d1;
     --primary-light-color: #c4b5fd;
     --secondary-color: #93c5fd;
     --background-color: #111827; /* Fondo más oscuro */
@@ -56,7 +56,7 @@ body {
     color: var(--text-color);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    transition: background-color 0.3s ease; /* Suaviza la transición del color de fondo */
+    transition: background-color 0.3s ease;
     margin: 0;
     padding: 0;
 }
