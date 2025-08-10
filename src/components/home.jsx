@@ -19,7 +19,7 @@ const BarraLateralButton = ({ onClick }) => (
 );
 
 // Icono Dark/Light mode
-const ThemeToggleIcon = ({ isDarkMode }) => (isDarkMode ? <Sun color="orange"/> : <Moon />);
+const ThemeToggleIcon = ({ isDarkMode }) => (isDarkMode ? <Sun color="orange" /> : <Moon />);
 
 function Home({ onLogout }) {
     // Dark Mode state
@@ -76,7 +76,7 @@ function Home({ onLogout }) {
 
                     {/* Mostrar barra lateral solo si está abierta */}
                     {showBarraLateral && (
-                        <BarraLateral  onLogout={onLogout} onClose={() => setShowBarraLateral(false)} />
+                        <BarraLateral isDarkMode={isDarkMode} onLogout={onLogout} onClose={() => setShowBarraLateral(false)} />
                     )}
                 </>
             )}

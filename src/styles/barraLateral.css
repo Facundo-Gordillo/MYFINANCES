@@ -48,7 +48,17 @@
   from {
     transform: translateX(-100%);
   }
+
   to {
     transform: translateX(0);
   }
+}
+
+
+#btn_logout {
+  top: 1rem;
+  left: 1rem;
+  z-index: 1100;
+  background-color: transparent;
+  color: var(--text-color);
 }
