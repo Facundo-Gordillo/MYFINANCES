@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import appFirebase from '../firebaseConfig'; // Importamos tu configuración de Firebase
+import appFirebase from '../../firebaseConfig';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import '../styles/addTransaction.css'
+import '../../styles/addTransaction.css'
 
 function AddTransaction({ onCancel }) {
     // ======================================

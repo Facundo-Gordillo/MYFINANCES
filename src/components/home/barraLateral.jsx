@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import "../styles/barraLateral.css";
+import '../../styles/barraLateral.css';
 import { LogOut } from "lucide-react";
 
 const LogOutButton = ({ isDarkMode, onClick }) => {

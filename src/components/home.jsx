@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Moon, Sun, Plus, Menu } from "lucide-react";
 import "../styles/home.css";
-import AddTransaction from "./addTransaction.jsx";
-import BarraLateral from "./barraLateral.jsx";
+import AddTransaction from "./home/addTransaction.jsx";
+import BarraLateral from "./home/barraLateral.jsx";
 
 // Botón flotante para agregar transacciones
 const AddTransactionButton = ({ onClick }) => (
