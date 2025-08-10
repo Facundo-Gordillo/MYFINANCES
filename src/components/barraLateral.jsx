@@ -2,23 +2,16 @@ import React, { useRef, useEffect } from "react";
 import "../styles/barraLateral.css";
 import { LogOut } from "lucide-react";
 
-// Botón para logout barra lateral
-// const LogOutButton = ({ onClick }) => (
-//   <button className="floating-button barra-lateral-button" id="btn_logout" onClick={onClick}>
-//     <LogOut size={24} color="white"/>
-//   </button>
-// );
-
 const LogOutButton = ({ isDarkMode, onClick }) => {
   return (
-    <button className="floating-button barra-lateral-button" onClick={onClick}>
-      <LogOut color={isDarkMode ? "white" : "black"} size={20} />
+    <button id="btn_logout" onClick={onClick}>
+      <LogOut color={isDarkMode ? "white" : "black"} size={24} />
     </button>
   );
 };
 
 
-function BarraLateral({ onClose, onLogout, isDarkMode}) {
+function BarraLateral({ onClose, onLogout, isDarkMode }) {
 
   const barraRef = useRef(null);
 

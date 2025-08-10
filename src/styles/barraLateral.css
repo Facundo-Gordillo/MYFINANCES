@@ -55,10 +55,27 @@
 }
 
 
+
+
+
+/* Estilos para Boton de logour (porque es complicado posicionarlo en su lugar correcto utilizando las clases ya existentes) */
 #btn_logout {
-  top: 1rem;
-  left: 1rem;
-  z-index: 1100;
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem; /* esquina inferior derecha */
   background-color: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
   color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  box-shadow: 0 2px 4px var(--box-shadow-color);
+  transition: background-color 0.3s ease;
+}
+
+#btn_logout:hover {
+  background-color: var(--primary-light-color);
 }
