@@ -1,7 +1,8 @@
 import React, { useRef, useEffect } from "react";
 import "../styles/barraLateral.css";
 
-function BarraLateral({ onClose }) {
+function BarraLateral({ onClose, onLogout }) {
+
   const barraRef = useRef(null);
 
   useEffect(() => {
@@ -38,6 +39,11 @@ function BarraLateral({ onClose }) {
           <li>
             <a href="#" className="sidebar-link">
               Añadir Categoría
+            </a>
+          </li>
+          <li>
+            <a href="#" onClick={(e) => { e.preventDefault(); onLogout(); }}>
+              Cerrar sesión
             </a>
           </li>
         </ul>
