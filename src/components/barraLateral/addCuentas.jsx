@@ -4,7 +4,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import '../../styles/addTransaction.css'
 
-function AddTransaction({ onCancel }) {
+function AddCuentas({ onCancel }) {
     // ======================================
     // ESTADO DEL FORMULARIO Y DE LA APP
     // ======================================
@@ -30,7 +30,7 @@ function AddTransaction({ onCancel }) {
             setDb(firestoreDb);
             setAuth(firebaseAuth);
 
-            // solo procede si hay un "user"
+            // solo procedem si hay un "user"
             const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
                 if (user) {
                     setUserId(user.uid);
@@ -62,7 +62,7 @@ function AddTransaction({ onCancel }) {
     // ======================================
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Verifica si el usuario está logueado antes de intentar guardar
         if (!db || !userId) {
             console.error("No se puede guardar: El usuario no está autenticado.");
@@ -105,22 +105,20 @@ function AddTransaction({ onCancel }) {
     // Si el usuario está logueado, muestra el formulario
     return (
         <div className="add-transaction-container">
-            <h2 className="form-title">Añadir Transacción</h2>
+            <h2 className="form-title">Añadir Cuenta</h2>
             <form onSubmit={handleSubmit} className="transaction-form">
-                   <div className="form-group">
-                    <label htmlFor="cuenta" className="form-label">Cuenta</label>
-                    <select
+                <div className="form-group">
+                    <label htmlFor="cuenta" className="form-label">Cuenta Nueva</label>
+                    <input
+                        type="text"
                         id="cuenta"
                         name="cuenta"
                         value={formData.cuenta}
                         onChange={handleInputChange}
-                        className="form-select"
-                    >
-                        <option value="egreso">Egreso</option>
-                        <option value="ingreso">Ingreso</option>
-                    </select>
+                        className="form-input"
+                        required
+                    />
                 </div>
-
                 <div className="form-group">
                     <label htmlFor="monto" className="form-label">Monto</label>
                     <input
@@ -132,31 +130,6 @@ function AddTransaction({ onCancel }) {
                         className="form-input"
                         required
                     />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="categoria" className="form-label">Categoría</label>
-                    <input
-                        type="text"
-                        id="categoria"
-                        name="categoria"
-                        value={formData.categoria}
-                        onChange={handleInputChange}
-                        className="form-input"
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="tipo" className="form-label">Tipo</label>
-                    <select
-                        id="tipo"
-                        name="tipo"
-                        value={formData.tipo}
-                        onChange={handleInputChange}
-                        className="form-select"
-                    >
-                        <option value="egreso">Egreso</option>
-                        <option value="ingreso">Ingreso</option>
-                    </select>
                 </div>
                 <div className="form-actions">
                     <button type="button" onClick={onCancel} className="cancel-button">
@@ -171,4 +144,4 @@ function AddTransaction({ onCancel }) {
     );
 }
 
-export default AddTransaction;
+export default AddCuentas;
