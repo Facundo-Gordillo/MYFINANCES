@@ -62,7 +62,7 @@ function AddTransaction({ onCancel }) {
     // ======================================
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Verifica si el usuario está logueado antes de intentar guardar
         if (!db || !userId) {
             console.error("No se puede guardar: El usuario no está autenticado.");
@@ -107,7 +107,7 @@ function AddTransaction({ onCancel }) {
         <div className="add-transaction-container">
             <h2 className="form-title">Añadir Transacción</h2>
             <form onSubmit={handleSubmit} className="transaction-form">
-                   <div className="form-group">
+                <div className="form-group">
                     <label htmlFor="cuenta" className="form-label">Cuenta</label>
                     <select
                         id="cuenta"
@@ -159,11 +159,11 @@ function AddTransaction({ onCancel }) {
                     </select>
                 </div>
                 <div className="form-actions">
-                    <button type="button" onClick={onCancel} className="cancel-button">
-                        Cancelar
-                    </button>
                     <button type="submit" className="save-button">
                         Guardar
+                    </button>
+                    <button type="button" onClick={onCancel} className="cancel-button">
+                        Cancelar
                     </button>
                 </div>
             </form>

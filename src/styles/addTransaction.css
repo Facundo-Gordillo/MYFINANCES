@@ -10,8 +10,8 @@
     align-items: center;
     width: 100%;
     padding: 1rem;
-    overflow: hidden; /* Esto es lo que elimina la barra de scroll */
-    box-sizing: border-box; /* Asegura que el padding no cause desbordamiento */
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 
