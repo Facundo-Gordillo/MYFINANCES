@@ -1,43 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import appFirebase from '../../firebaseConfig';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import '../../styles/addTransaction.css'
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from 'firebase/firestore';
+import '../../styles/addTransaction.css';
 
 function AddTransaction({ onCancel }) {
-    // ======================================
-    // ESTADO DEL FORMULARIO Y DE LA APP
-    // ======================================
+
+    // estado del form y de app
     const [formData, setFormData] = useState({
         monto: '',
         categoria: '',
-        tipo: 'egreso'
+        tipo: 'egreso',
+        cuenta: ''
     });
+
     const [db, setDb] = useState(null);
     const [auth, setAuth] = useState(null);
     const [userId, setUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [cuentas, setCuentas] = useState([]);
+    const [isLoadingCuentas, setIsLoadingCuentas] = useState(true);
 
-    // ======================================
-    // INICIALIZACIÓN Y AUTENTICACIÓN DE FIREBASE
-    // ======================================
+
     useEffect(() => {
         try {
-            // Inicializa Firestore y Auth usando objeto appFirebase
             const firestoreDb = getFirestore(appFirebase);
             const firebaseAuth = getAuth(appFirebase);
 
             setDb(firestoreDb);
             setAuth(firebaseAuth);
 
-            // solo procede si hay un "user"
-            const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
+            const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
                 if (user) {
                     setUserId(user.uid);
-                    setIsLoading(false); // El usuario está logueado, se puede mostrar la app
+                    setIsLoading(false);
+
+                    // Cargar las cuentas del usuario
+                    try {
+                        const cuentasRef = collection(firestoreDb, `users/${user.uid}/cuentas`);
+                        const snapshot = await getDocs(cuentasRef);
+                        const cuentasData = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+
+                        setCuentas(cuentasData);
+                        setIsLoadingCuentas(false);
+
+                        if (cuentasData.length > 0) {
+                            setFormData(prev => ({ ...prev, cuenta: cuentasData[0].id }));
+                        }
+                    } catch (error) {
+                        console.error("Error al obtener las cuentas:", error);
+                        setIsLoadingCuentas(false);
+                    }
                 } else {
                     setUserId(null);
-                    setIsLoading(false); // No hay usuario
+                    setIsLoading(false);
+                    setIsLoadingCuentas(false);
                 }
             });
 
@@ -45,6 +65,7 @@ function AddTransaction({ onCancel }) {
         } catch (error) {
             console.error("Error al inicializar Firebase:", error);
             setIsLoading(false);
+            setIsLoadingCuentas(false);
         }
     }, []);
 
@@ -57,52 +78,48 @@ function AddTransaction({ onCancel }) {
         }));
     };
 
-    // ======================================
-    // MANEJADOR DE ENVÍO CON FIRESTORE
-    // ======================================
+
+    // ENVÍO CON FIRESTORE
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Verifica si el usuario está logueado antes de intentar guardar
         if (!db || !userId) {
             console.error("No se puede guardar: El usuario no está autenticado.");
             return;
         }
 
         try {
-            // Referencia a la colección donde se guardarán las transacciones.
-            // La ruta es específica de cada usuario.
             const transactionsCollection = collection(db, `users/${userId}/transactions`);
-
-            // Añadir un nuevo documento a la colección con los datos del formulario y una marca de tiempo
             await addDoc(transactionsCollection, {
                 ...formData,
-                timestamp: serverTimestamp() // Usamos serverTimestamp para mayor precisión
+                timestamp: serverTimestamp()
             });
 
+
             console.log("Transacción guardada exitosamente en Firestore!");
-            // Volver a la vista principal después de guardar
             onCancel();
         } catch (error) {
             console.error("Error al añadir la transacción:", error);
-            // Aquí podrías mostrar un mensaje de error al usuario
         }
     };
 
-    // ======================================
-    // RENDERIZADO CONDICIONAL
-    // ======================================
-    // Mientras se verifica el estado de login, muestra un mensaje de carga.
-    if (isLoading) {
-        return <div className="add-transaction-container text-center py-8">Verificando sesión...</div>;
+    // RENDERIZADO
+    if (isLoading || isLoadingCuentas) {
+        return <div className="add-transaction-container text-center py-8">Cargando...</div>;
     }
 
-    // Si el usuario no está logueado, muestra un mensaje
     if (!userId) {
         return <div className="add-transaction-container text-center py-8">Debes iniciar sesión para añadir transacciones.</div>;
     }
 
-    // Si el usuario está logueado, muestra el formulario
+    if (cuentas.length === 0) {
+        return (
+            <div className="add-transaction-container text-center py-8">
+                No tienes cuentas registradas. Por favor, crea una cuenta antes de añadir una transacción.
+            </div>
+        );
+    }
+
     return (
         <div className="add-transaction-container">
             <h2 className="form-title">Añadir Transacción</h2>
@@ -115,9 +132,13 @@ function AddTransaction({ onCancel }) {
                         value={formData.cuenta}
                         onChange={handleInputChange}
                         className="form-select"
+                        required
                     >
-                        <option value="egreso">Egreso</option>
-                        <option value="ingreso">Ingreso</option>
+                        {cuentas.map((cuenta) => (
+                            <option key={cuenta.id} value={cuenta.id}>
+                                {cuenta.nombre || cuenta.id}
+                            </option>
+                        ))}
                     </select>
                 </div>
 
@@ -133,6 +154,7 @@ function AddTransaction({ onCancel }) {
                         required
                     />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="categoria" className="form-label">Categoría</label>
                     <input
@@ -145,6 +167,7 @@ function AddTransaction({ onCancel }) {
                         required
                     />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="tipo" className="form-label">Tipo</label>
                     <select
@@ -158,13 +181,10 @@ function AddTransaction({ onCancel }) {
                         <option value="ingreso">Ingreso</option>
                     </select>
                 </div>
+
                 <div className="form-actions">
-                    <button type="submit" className="save-button">
-                        Guardar
-                    </button>
-                    <button type="button" onClick={onCancel} className="cancel-button">
-                        Cancelar
-                    </button>
+                    <button type="submit" className="save-button">Guardar</button>
+                    <button type="button" onClick={onCancel} className="cancel-button">Cancelar</button>
                 </div>
             </form>
         </div>
