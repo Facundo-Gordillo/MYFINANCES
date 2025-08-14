@@ -53,7 +53,6 @@ function Cuentas({ onLogout }) {
             if (user) {
                 setUserId(user.uid);
 
-                // Escucha en tiempo real la colección "cuentas" del usuario
                 const cuentasRef = collection(db, `users/${user.uid}/cuentas`);
                 const unsubscribeSnapshot = onSnapshot(cuentasRef, (snapshot) => {
                     const cuentasData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -72,7 +71,6 @@ function Cuentas({ onLogout }) {
 
     const toggleDarkMode = () => setIsDarkMode(prev => !prev);
 
-    // Función para eliminar una cuenta
     const handleDeleteCuenta = async (cuentaId) => {
         try {
             const cuentaRef = doc(db, `users/${userId}/cuentas`, cuentaId);
@@ -83,10 +81,9 @@ function Cuentas({ onLogout }) {
         }
     };
 
-    // Función para editar una cuenta
     const handleEditCuenta = (cuenta) => {
         setCuentaEdit(cuenta); 
-        setShowAddCuentas(true);  // Muestra el formulario de agregar en caso de que la cuenta ya exista (debe mostrarlo con datos precargados)
+        setShowAddCuentas(true); // Muestra el formulario de agregar en caso de que la cuenta ya exista (debe mostrarlo con datos precargados)
     };
 
     return (
@@ -116,17 +113,15 @@ function Cuentas({ onLogout }) {
                         </button>
                     </header>
 
-                    <main className="home-main">
-                        {cuentas.length === 0 ? (
-                            <p>Agregue una cuenta inicial</p>
-                        ) : (
+                    {cuentas.length > 0 && (
+                        <main className="home-main">
                             <div className="cuentas-container">
                                 {cuentas.map((cuenta) => (
                                     <div className="cuenta-card" key={cuenta.id}>
                                         <span className="cuenta-nombre">{cuenta.nombre}</span>
                                         <span className="cuenta-monto">{cuenta.monto}</span>
                                         <div className="cuenta-actions">
-                                            <button 
+                                            <button
                                                 className="edit-button"
                                                 onClick={() => handleEditCuenta(cuenta)}
                                                 title="Editar Cuenta"
@@ -144,8 +139,8 @@ function Cuentas({ onLogout }) {
                                     </div>
                                 ))}
                             </div>
-                        )}
-                    </main>
+                        </main>
+                    )}
 
                     <AddCuentasButton onClick={() => setShowAddCuentas(true)} />
 
