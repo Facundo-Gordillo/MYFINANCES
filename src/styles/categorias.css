@@ -10,13 +10,13 @@
 .categoria-wrapper {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* separa la card de los botones */
+    justify-content: space-between;
     width: 100%;
     gap: 1rem;
 }
 
 .categoria-card {
-    flex: 1; /* ocupa todo el espacio disponible */
+    flex: 1;
     border-radius: 1rem;
     padding: 1.5rem 2rem;
     color: #fff;
@@ -28,7 +28,7 @@
 
 .categoria-actions {
     display: flex;
-    flex-direction: column; /* botones en columna */
+    flex-direction: column;
     gap: 0.5rem;
 }
 
