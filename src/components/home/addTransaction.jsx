@@ -16,7 +16,7 @@ function AddTransaction({ onCancel }) {
     const [formData, setFormData] = useState({
         monto: '',
         categoriaId: '',
-        tipo: 'egreso', // Es por default, aunque se cambia luego en el tipo.
+        tipo: 'egreso', // Es egreso por default, aunque despues se cambia en "tipo" al agregar una transaccion
         cuentaId: ''
     });
 
