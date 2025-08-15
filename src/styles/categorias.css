@@ -52,15 +52,20 @@
     color: red;
 }
 
+.cuenta-nombre {
+    width: 100%;
+    text-align: center;
+}
+
 /* Responsive para móviles */
 @media (max-width: 480px) {
     .categoria-wrapper {
-        flex-direction: column;
+        flex-direction: row;
         align-items: stretch;
     }
     
     .categoria-actions {
-        flex-direction: row;
+        flex-direction: column;
         justify-content: flex-end;
         margin-top: 0.5rem;
         gap: 0.5rem;
