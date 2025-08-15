@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import appFirebase from '../../firebaseConfig';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, addDoc, serverTimestamp, getDocs, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs, onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
 import '../../styles/addTransaction.css';
 
 function AddTransaction({ onCancel }) {
@@ -91,53 +91,57 @@ function AddTransaction({ onCancel }) {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+
+
+
     // Behavior de submit -- guardar transacciones y actualizasr balances:
-   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!db || !userId) {
-        console.error("Usuario no autenticado");
-        return;
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    try {
-        // Guardar la transacción
-        const transactionsRef = collection(db, `users/${userId}/transactions`);
-        const newTransaction = {
-            monto: Number(formData.monto),
-            tipo: formData.tipo,
-            cuentaId: formData.cuentaId,
-            categoriaId: formData.categoriaId,
-            timestamp: serverTimestamp()
-        };
-        await addDoc(transactionsRef, newTransaction);
-
-        // Actualizar balance de la cuenta
-        const cuentaActual = cuentas.find(c => c.id === formData.cuentaId);
-        if (!cuentaActual) {
-            console.warn("Cuenta no encontrada, balance no actualizado");
-        } else {
-            let nuevoBalance = Number(cuentaActual.montoOriginal || 0);
-            if (formData.tipo === "ingreso") {
-                nuevoBalance += Number(formData.monto);
-            } else {
-                nuevoBalance -= Number(formData.monto);
-            }
-
-            const cuentaRef = doc(db, `users/${userId}/cuentas`, formData.cuentaId);
-            await updateDoc(cuentaRef, { montoOriginal: nuevoBalance });
-
-            // Actualizar estado local para reflejar cambio inmediato
-            setCuentas(prev => prev.map(c => 
-                c.id === formData.cuentaId ? { ...c, montoOriginal: nuevoBalance } : c
-            ));
+        if (!db || !userId) {
+            console.error("Usuario no autenticado");
+            return;
         }
 
-        console.log("Transacción guardada y balance actualizado");
-        onCancel();
-    } catch (error) {
-        console.error("Error al guardar transacción y actualizar balance:", error);
-    }
-};
+        try {
+            const transactionsRef = collection(db, `users/${userId}/transactions`);
+            const cuentasRef = collection(db, `users/${userId}/cuentas`);
+            const cuentaRef = doc(db, `users/${userId}/cuentas/${formData.cuentaId}`);
+
+            // Guardar la transacción
+            await addDoc(transactionsRef, {
+                monto: Number(formData.monto),
+                tipo: formData.tipo,
+                cuentaId: formData.cuentaId,
+                categoriaId: formData.categoriaId,
+                timestamp: serverTimestamp()
+            });
+
+            // Leer el balance actual de la cuenta
+            const cuentaSnap = await getDoc(cuentaRef);
+            if (!cuentaSnap.exists()) {
+                console.error("La cuenta seleccionada no existe");
+                return;
+            }
+
+            const cuentaData = cuentaSnap.data();
+            let nuevoMonto = Number(cuentaData.monto || 0);
+
+            // Actualizar el balance según tipo de transacción
+            if (formData.tipo === "ingreso") {
+                nuevoMonto += Number(formData.monto);
+            } else {
+                nuevoMonto -= Number(formData.monto);
+            }
+
+            await updateDoc(cuentaRef, { monto: nuevoMonto });
+
+            console.log("Transacción guardada y balance actualizado correctamente");
+            onCancel();
+        } catch (error) {
+            console.error("Error al guardar transacción y actualizar balance:", error);
+        }
+    };
 
 
 
