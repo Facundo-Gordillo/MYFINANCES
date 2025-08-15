@@ -26,7 +26,7 @@ const ThemeToggleIcon = ({ isDarkMode }) => {
 
 
 // FUNCION DE LOGIN
-function Login({ onLoginSuccess }) {
+function Login() {
 
 
     //    ======================================
@@ -99,8 +99,6 @@ function Login({ onLoginSuccess }) {
             setError(false);
             setErrorMessage("");
             console.log("Inicio de sesión exitoso!");
-
-            onLoginSuccess(); // Llama a la función de prop para notificar al componente padre
 
         } catch (firebaseError) {
             setError(true); // Si el inicio de sesión falla
