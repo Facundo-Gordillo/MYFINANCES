@@ -3,6 +3,15 @@ import { Moon, Sun } from 'lucide-react'; // Importa los iconos
 import '../styles/login.css';
 import appFirebase from '../firebaseConfig';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from "react-router-dom";
+
+
+
+// Inicializar Firebase
+const auth = getAuth(appFirebase);
+
+
+
 
 // Componente para iconos
 const ThemeToggleIcon = ({ isDarkMode }) => {
@@ -12,11 +21,12 @@ const ThemeToggleIcon = ({ isDarkMode }) => {
     return <Moon />;
 };
 
-// Inicializar Firebase
-const auth = getAuth(appFirebase);
+
+
+
 
 // FUNCION DE REGISTRO
-function Register({ onLoginClick, onRegistrationSuccess }) {
+function Register({ onRegistrationSuccess }) {
 
 
     //    ======================================
@@ -48,6 +58,18 @@ function Register({ onLoginClick, onRegistrationSuccess }) {
     const toggleDarkMode = () => {
         setIsDarkMode(prevMode => !prevMode);
     };
+
+
+
+    // Logica para abrir la ruta Register.
+    const navigate = useNavigate();
+    
+    const handleLoginClick = (e) => {
+        e.preventDefault();
+        navigate("/login");
+    };
+
+
 
 
     //    ======================================
@@ -184,7 +206,7 @@ function Register({ onLoginClick, onRegistrationSuccess }) {
             </form>
 
             <p className="signup-text">
-                ¿Ya tienes una cuenta? <a href="#" className="signup-link" onClick={onLoginClick}>Inicia sesión</a>
+                ¿Ya tienes una cuenta? <a href="#" className="signup-link" onClick={handleLoginClick}>Inicia sesión</a>
             </p>
         </div>
     );

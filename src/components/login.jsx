@@ -5,6 +5,8 @@ import appFirebase from '../firebaseConfig';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
+
+
 // Inicializar Firebase
 const auth = getAuth(appFirebase);
 
@@ -62,6 +64,7 @@ function Login({ onLoginSuccess }) {
 
     // Logica para abrir la ruta Register.
     const navigate = useNavigate();
+
     const handleRegisterClick = (e) => {
         e.preventDefault();
         navigate("/register");
