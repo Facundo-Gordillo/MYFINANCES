@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import appFirebase from '../../firebaseConfig';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs, onSnapshot } from 'firebase/firestore';
 import '../../styles/addTransaction.css';
 
 function AddTransaction({ onCancel }) {
+
+    // configuracion de firebase (estados)
+    const [db, setDb] = useState(null);
+    const [auth, setAuth] = useState(null);
+    const [userId, setUserId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // estado del form y de app
     const [formData, setFormData] = useState({
@@ -14,14 +20,16 @@ function AddTransaction({ onCancel }) {
         cuenta: ''
     });
 
-    const [db, setDb] = useState(null);
-    const [auth, setAuth] = useState(null);
-    const [userId, setUserId] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    // Estados para categorias
+    const [categorias, setCategorias] = useState([]);
+    const [isLoadingCategorias, setIsLoadingCategorias] = useState(true);
+
+    // Estados para cuentas
     const [cuentas, setCuentas] = useState([]);
     const [isLoadingCuentas, setIsLoadingCuentas] = useState(true);
 
 
+    // UseEffect para cuentas
     useEffect(() => {
         try {
             const firestoreDb = getFirestore(appFirebase);
@@ -69,6 +77,32 @@ function AddTransaction({ onCancel }) {
         }
     }, []);
 
+
+    // UseEfect para categorias
+    useEffect(() => {
+        if (!userId || !db) return;
+
+        const categoriasRef = collection(db, `users/${userId}/categorias`);
+        const unsubscribe = onSnapshot(categoriasRef, (snapshot) => {
+            const categoriasData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setCategorias(categoriasData);
+
+            // Selecciona la primera categoría disponible si no hay seleccionada
+            if (categoriasData.length > 0 && !formData.categoria) {
+                setFormData(prev => ({ ...prev, categoria: categoriasData[0].nombre }));
+            } else if (categoriasData.length === 0 && !formData.categoria) {
+                setFormData(prev => ({ ...prev, categoria: "Transaccion" })); // Si no hay categoria sera transaccion el default
+            }
+        });
+
+        return () => unsubscribe();
+    }, [userId, db]);
+
+
+
+
+
+
     // Maneja los cambios en los campos del formulario
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -77,6 +111,8 @@ function AddTransaction({ onCancel }) {
             [name]: value
         }));
     };
+
+
 
 
     // ENVÍO CON FIRESTORE
@@ -157,16 +193,21 @@ function AddTransaction({ onCancel }) {
 
                 <div className="form-group">
                     <label htmlFor="categoria" className="form-label">Categoría</label>
-                    <input
-                        type="text"
+                    <select
                         id="categoria"
                         name="categoria"
                         value={formData.categoria}
                         onChange={handleInputChange}
-                        className="form-input"
+                        className="form-select"
                         required
-                    />
+                    >
+                        <option value="">Seleccionar categoría</option>
+                        {categorias.map(cat => (
+                            <option key={cat.id} value={cat.nombre}>{cat.nombre}</option>
+                        ))}
+                    </select>
                 </div>
+
 
                 <div className="form-group">
                     <label htmlFor="tipo" className="form-label">Tipo</label>
