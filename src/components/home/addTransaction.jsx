@@ -6,178 +6,151 @@ import '../../styles/addTransaction.css';
 
 function AddTransaction({ onCancel }) {
 
-    // configuracion de firebase (estados)
+    // Estado Firebase
     const [db, setDb] = useState(null);
     const [auth, setAuth] = useState(null);
     const [userId, setUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // estado del form y de app
+    // Estado del formulario
     const [formData, setFormData] = useState({
         monto: '',
-        categoria: '',
-        tipo: 'egreso',
-        cuenta: ''
+        categoriaId: '',
+        tipo: 'egreso', // Es por default, aunque se cambia luego en el tipo.
+        cuentaId: ''
     });
 
-    // Estados para categorias
+    // Estado para categorías y cuentas
     const [categorias, setCategorias] = useState([]);
-    const [isLoadingCategorias, setIsLoadingCategorias] = useState(true);
-
-    // Estados para cuentas
     const [cuentas, setCuentas] = useState([]);
+    const [isLoadingCategorias, setIsLoadingCategorias] = useState(true);
     const [isLoadingCuentas, setIsLoadingCuentas] = useState(true);
 
-
-    // UseEffect para cuentas
+    // Inicialización de Firebase y carga de cuentas
     useEffect(() => {
-        try {
-            const firestoreDb = getFirestore(appFirebase);
-            const firebaseAuth = getAuth(appFirebase);
+        const firestoreDb = getFirestore(appFirebase);
+        const firebaseAuth = getAuth(appFirebase);
 
-            setDb(firestoreDb);
-            setAuth(firebaseAuth);
+        setDb(firestoreDb);
+        setAuth(firebaseAuth);
 
-            const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
-                if (user) {
-                    setUserId(user.uid);
-                    setIsLoading(false);
+        const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
+            if (user) {
+                setUserId(user.uid);
+                setIsLoading(false);
 
-                    // Cargar las cuentas del usuario
-                    try {
-                        const cuentasRef = collection(firestoreDb, `users/${user.uid}/cuentas`);
-                        const snapshot = await getDocs(cuentasRef);
-                        const cuentasData = snapshot.docs.map(doc => ({
-                            id: doc.id,
-                            ...doc.data()
-                        }));
+                // Cargar cuentas
+                try {
+                    const cuentasRef = collection(firestoreDb, `users/${user.uid}/cuentas`);
+                    const snapshot = await getDocs(cuentasRef);
+                    const cuentasData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    setCuentas(cuentasData);
+                    setIsLoadingCuentas(false);
 
-                        setCuentas(cuentasData);
-                        setIsLoadingCuentas(false);
-
-                        if (cuentasData.length > 0) {
-                            setFormData(prev => ({ ...prev, cuenta: cuentasData[0].id }));
-                        }
-                    } catch (error) {
-                        console.error("Error al obtener las cuentas:", error);
-                        setIsLoadingCuentas(false);
+                    if (cuentasData.length > 0) {
+                        setFormData(prev => ({ ...prev, cuentaId: cuentasData[0].id }));
                     }
-                } else {
-                    setUserId(null);
-                    setIsLoading(false);
+                } catch (error) {
+                    console.error("Error al obtener cuentas:", error);
                     setIsLoadingCuentas(false);
                 }
-            });
+            } else {
+                setUserId(null);
+                setIsLoading(false);
+                setIsLoadingCuentas(false);
+            }
+        });
 
-            return () => unsubscribe();
-        } catch (error) {
-            console.error("Error al inicializar Firebase:", error);
-            setIsLoading(false);
-            setIsLoadingCuentas(false);
-        }
+        return () => unsubscribe();
     }, []);
 
-
-    // UseEfect para categorias
+    // Cargar categorías en tiempo real
     useEffect(() => {
-        if (!userId || !db) return;
+        if (!db || !userId) return;
 
         const categoriasRef = collection(db, `users/${userId}/categorias`);
         const unsubscribe = onSnapshot(categoriasRef, (snapshot) => {
             const categoriasData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setCategorias(categoriasData);
+            setIsLoadingCategorias(false);
 
-            // Selecciona la primera categoría disponible si no hay seleccionada
-            if (categoriasData.length > 0 && !formData.categoria) {
-                setFormData(prev => ({ ...prev, categoria: categoriasData[0].nombre }));
-            } else if (categoriasData.length === 0 && !formData.categoria) {
-                setFormData(prev => ({ ...prev, categoria: "Transaccion" })); // Si no hay categoria sera transaccion el default
+            // Seleccionar la primera categoría disponible o "Transaccion" por defecto
+            if (categoriasData.length > 0 && !formData.categoriaId) {
+                setFormData(prev => ({ ...prev, categoriaId: categoriasData[0].id }));
+            } else if (!formData.categoriaId) {
+                setFormData(prev => ({ ...prev, categoriaId: 'Transaccion' }));
             }
         });
 
         return () => unsubscribe();
-    }, [userId, db]);
+    }, [db, userId]);
 
-
-
-
-
-
-    // Maneja los cambios en los campos del formulario
+    // Manejar cambios en los inputs
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-
-
-
-    // ENVÍO CON FIRESTORE
+    // Guardar transacción
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!db || !userId) {
-            console.error("No se puede guardar: El usuario no está autenticado.");
+            console.error("Usuario no autenticado");
             return;
         }
 
         try {
-            const transactionsCollection = collection(db, `users/${userId}/transactions`);
-            await addDoc(transactionsCollection, {
-                ...formData,
+            const transactionsRef = collection(db, `users/${userId}/transactions`);
+            await addDoc(transactionsRef, {
+                monto: Number(formData.monto),
+                tipo: formData.tipo,
+                cuentaId: formData.cuentaId,
+                categoriaId: formData.categoriaId,
                 timestamp: serverTimestamp()
             });
-
-
-            console.log("Transacción guardada exitosamente en Firestore!");
+            console.log("Transacción guardada");
             onCancel();
         } catch (error) {
-            console.error("Error al añadir la transacción:", error);
+            console.error("Error al guardar transacción:", error);
         }
     };
 
-    // RENDERIZADO
-    if (isLoading || isLoadingCuentas) {
+    // Render
+    if (isLoading || isLoadingCuentas || isLoadingCategorias) {
         return <div className="add-transaction-container text-center py-8">Cargando...</div>;
     }
 
     if (!userId) {
-        return <div className="add-transaction-container text-center py-8">Debes iniciar sesión para añadir transacciones.</div>;
+        return <div className="add-transaction-container text-center py-8">Debes iniciar sesión.</div>;
     }
 
     if (cuentas.length === 0) {
-        return (
-            <div className="add-transaction-container text-center py-8">
-                No tienes cuentas registradas. Por favor, crea una cuenta antes de añadir una transacción.
-            </div>
-        );
+        return <div className="add-transaction-container text-center py-8">No tienes cuentas registradas.</div>;
     }
 
     return (
         <div className="add-transaction-container">
             <h2 className="form-title">Añadir Transacción</h2>
             <form onSubmit={handleSubmit} className="transaction-form">
+
+                {/* Cuentas */}
                 <div className="form-group">
-                    <label htmlFor="cuenta" className="form-label">Cuenta</label>
+                    <label htmlFor="cuentaId" className="form-label">Cuenta</label>
                     <select
-                        id="cuenta"
-                        name="cuenta"
-                        value={formData.cuenta}
+                        id="cuentaId"
+                        name="cuentaId"
+                        value={formData.cuentaId}
                         onChange={handleInputChange}
                         className="form-select"
                         required
                     >
-                        {cuentas.map((cuenta) => (
-                            <option key={cuenta.id} value={cuenta.id}>
-                                {cuenta.nombre || cuenta.id}
-                            </option>
+                        {cuentas.map(c => (
+                            <option key={c.id} value={c.id}>{c.nombre}</option>
                         ))}
                     </select>
                 </div>
 
+                {/* Monto */}
                 <div className="form-group">
                     <label htmlFor="monto" className="form-label">Monto</label>
                     <input
@@ -191,24 +164,24 @@ function AddTransaction({ onCancel }) {
                     />
                 </div>
 
+                {/* Categorías */}
                 <div className="form-group">
-                    <label htmlFor="categoria" className="form-label">Categoría</label>
+                    <label htmlFor="categoriaId" className="form-label">Categoría</label>
                     <select
-                        id="categoria"
-                        name="categoria"
-                        value={formData.categoria}
+                        id="categoriaId"
+                        name="categoriaId"
+                        value={formData.categoriaId}
                         onChange={handleInputChange}
                         className="form-select"
                         required
                     >
-                        <option value="">Seleccionar categoría</option>
                         {categorias.map(cat => (
-                            <option key={cat.id} value={cat.nombre}>{cat.nombre}</option>
+                            <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                         ))}
                     </select>
                 </div>
 
-
+                {/* Tipo */}
                 <div className="form-group">
                     <label htmlFor="tipo" className="form-label">Tipo</label>
                     <select
