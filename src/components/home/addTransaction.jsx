@@ -91,29 +91,56 @@ function AddTransaction({ onCancel }) {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Guardar transacción
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!db || !userId) {
-            console.error("Usuario no autenticado");
-            return;
+    // Behavior de submit -- guardar transacciones y actualizasr balances:
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!db || !userId) {
+        console.error("Usuario no autenticado");
+        return;
+    }
+
+    try {
+        // Guardar la transacción
+        const transactionsRef = collection(db, `users/${userId}/transactions`);
+        const newTransaction = {
+            monto: Number(formData.monto),
+            tipo: formData.tipo,
+            cuentaId: formData.cuentaId,
+            categoriaId: formData.categoriaId,
+            timestamp: serverTimestamp()
+        };
+        await addDoc(transactionsRef, newTransaction);
+
+        // Actualizar balance de la cuenta
+        const cuentaActual = cuentas.find(c => c.id === formData.cuentaId);
+        if (!cuentaActual) {
+            console.warn("Cuenta no encontrada, balance no actualizado");
+        } else {
+            let nuevoBalance = Number(cuentaActual.montoOriginal || 0);
+            if (formData.tipo === "ingreso") {
+                nuevoBalance += Number(formData.monto);
+            } else {
+                nuevoBalance -= Number(formData.monto);
+            }
+
+            const cuentaRef = doc(db, `users/${userId}/cuentas`, formData.cuentaId);
+            await updateDoc(cuentaRef, { montoOriginal: nuevoBalance });
+
+            // Actualizar estado local para reflejar cambio inmediato
+            setCuentas(prev => prev.map(c => 
+                c.id === formData.cuentaId ? { ...c, montoOriginal: nuevoBalance } : c
+            ));
         }
 
-        try {
-            const transactionsRef = collection(db, `users/${userId}/transactions`);
-            await addDoc(transactionsRef, {
-                monto: Number(formData.monto),
-                tipo: formData.tipo,
-                cuentaId: formData.cuentaId,
-                categoriaId: formData.categoriaId,
-                timestamp: serverTimestamp()
-            });
-            console.log("Transacción guardada");
-            onCancel();
-        } catch (error) {
-            console.error("Error al guardar transacción:", error);
-        }
-    };
+        console.log("Transacción guardada y balance actualizado");
+        onCancel();
+    } catch (error) {
+        console.error("Error al guardar transacción y actualizar balance:", error);
+    }
+};
+
+
+
 
     // Render
     if (isLoading || isLoadingCuentas || isLoadingCategorias) {
