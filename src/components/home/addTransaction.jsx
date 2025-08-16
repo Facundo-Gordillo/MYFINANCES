@@ -105,7 +105,6 @@ function AddTransaction({ onCancel }) {
 
         try {
             const transactionsRef = collection(db, `users/${userId}/transactions`);
-            const cuentasRef = collection(db, `users/${userId}/cuentas`);
             const cuentaRef = doc(db, `users/${userId}/cuentas/${formData.cuentaId}`);
 
             // Guardar la transacción
@@ -114,7 +113,8 @@ function AddTransaction({ onCancel }) {
                 tipo: formData.tipo,
                 cuentaId: formData.cuentaId,
                 categoriaId: formData.categoriaId,
-                timestamp: serverTimestamp()
+                timestamp: serverTimestamp(),
+                descripcion: formData.descripcion
             });
 
             // Leer el balance actual de la cuenta
@@ -225,6 +225,19 @@ function AddTransaction({ onCancel }) {
                         <option value="egreso">Egreso</option>
                         <option value="ingreso">Ingreso</option>
                     </select>
+                </div>
+
+                {/* Descripcion */}
+                <div className="form-group">
+                    <label htmlFor="descripcion" className="form-label">Descripcion</label>
+                    <input
+                        type="text"
+                        id="descripcion"
+                        name="descripcion"
+                        value={formData.descripcion}
+                        onChange={handleInputChange}
+                        className="form-input"
+                    />
                 </div>
 
                 <div className="form-actions">
