@@ -129,12 +129,7 @@
         width: 10%;
         justify-content: flex-start;
     }
-
-    .descripcion-wrapper {
-        flex: 1 1 100%;
-        margin-bottom: 0.5rem;
-    }
-
+    
     .monto, .delete-button {
         flex-shrink: 0;
         margin-left: 0.5rem;
