@@ -17,7 +17,8 @@ function AddTransaction({ onCancel }) {
         monto: '',
         categoriaId: '',
         tipo: 'egreso', // Es egreso por default, aunque despues se cambia en "tipo" al agregar una transaccion
-        cuentaId: ''
+        cuentaId: '',
+        descripcion: ''
     });
 
     // Estado para categorías y cuentas
