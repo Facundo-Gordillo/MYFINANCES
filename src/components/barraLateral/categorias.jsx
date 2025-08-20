@@ -133,14 +133,14 @@ function Categorias({ onLogout }) {
                                                 onClick={() => handleEditCategoria(categoria)}
                                                 title="Editar Categoría"
                                             >
-                                                <Pencil size={20} />
+                                                <Pencil size={20} color="green"/>
                                             </button>
                                             <button
                                                 className="delete-button"
                                                 onClick={() => handleDeleteCategoria(categoria.id)}
                                                 title="Eliminar Categoría"
                                             >
-                                                <Trash2 size={20} />
+                                                <Trash2 size={20} color="red"/>
                                             </button>
                                         </div>
                                     </div>

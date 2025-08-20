@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Moon, Sun, Plus, Menu } from "lucide-react";
+import { Moon, Sun, Plus, Menu, Trash2 } from "lucide-react";
 import "../styles/home.css";
 import AddTransaction from "./home/addTransaction.jsx";
 import BarraLateral from "./home/barraLateral.jsx";
+
+import appFirebase from "../firebaseConfig";
+import { getFirestore, collection, query, orderBy, onSnapshot, doc, deleteDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+
+
+const db = getFirestore(appFirebase);
 
 // Botón flotante para agregar transacciones
 const AddTransactionButton = ({ onClick }) => (
@@ -43,6 +50,72 @@ function Home({ onLogout }) {
     const [showAddTransaction, setShowAddTransaction] = useState(false);
     const [showBarraLateral, setShowBarraLateral] = useState(false);
 
+    // Estado de transacciones
+    const [transacciones, setTransacciones] = useState([]);
+
+
+
+    // Cargar transacciones en tiempo real --> Para mostrar las transacciones en el home
+    useEffect(() => {
+        const user = getAuth().currentUser;
+        if (!user) return;
+
+        const transactionsRef = collection(db, "users", user.uid, "transactions");
+        const q = query(transactionsRef, orderBy("timestamp", "desc"));
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            if (snapshot.empty) {
+                setTransacciones([]);
+            } else {
+                setTransacciones(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+
+
+
+    // Estado de categorias (Para mostrar los colores a las que pertenecen las transacciones)
+    const [categorias, setCategorias] = useState([]);
+
+    // Traer categorías en tiempo real
+    useEffect(() => {
+        const user = getAuth().currentUser;
+        if (!user) return;
+
+        const categoriasRef = collection(db, "users", user.uid, "categorias");
+        const unsubscribe = onSnapshot(categoriasRef, (snapshot) => {
+            setCategorias(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+
+
+
+    // Eliminar una transacción
+    const handleDelete = async (id) => {
+        try {
+            const user = getAuth().currentUser;
+            if (!user) return;
+            await deleteDoc(doc(db, "users", user.uid, "transactions", id));
+        } catch (error) {
+            console.error("Error al eliminar transacción:", error);
+        }
+    };
+
+
+    // Función para obtener color de categoría
+    const getCategoriaColor = (categoriaId) => {
+        const cat = categorias.find(c => c.id === categoriaId);
+        return cat ? cat.color : "transparent"; // fallback
+    };
+
+
+
     return (
         <div className="home-container">
             {showAddTransaction ? (
@@ -63,20 +136,50 @@ function Home({ onLogout }) {
                         </button>
                     </header>
 
+
                     <main className="home-main">
-                        <p>Contenido de la página Home...</p>
+                        {transacciones.length === 0 ? (
+                            <p>No hay transacciones todavía.</p>
+                        ) : (
+                            <div className="transacciones-container">
+                                {transacciones.map((t) => (
+                                    <div key={t.id} className={`transaccion ${t.tipo}`}>
+                                        {/* Wrapper para flag + descripción */}
+                                        <div className="descripcion-wrapper">
+                                            <div
+                                                className="categoria-flag"
+                                                style={{ backgroundColor: getCategoriaColor(t.categoriaId) }}
+                                            ></div>
+                                            <span className="descripcion">{t.descripcion}</span>
+                                        </div>
+
+                                        {/* Monto */}
+                                        <span className="monto">
+                                            {t.tipo === "egreso" ? "-" : "+"}${t.monto}
+                                        </span>
+
+                                        {/* Botón de borrar */}
+                                        <button className="delete-button" onClick={() => handleDelete(t.id)}>
+                                            <Trash2 size={20} color="red" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </main>
 
                     <AddTransactionButton onClick={() => setShowAddTransaction(true)} />
 
-                    {/* Mostrar botón solo si barra lateral está cerrada */}
                     {!showBarraLateral && (
                         <BarraLateralButton onClick={() => setShowBarraLateral(true)} />
                     )}
 
-                    {/* Mostrar barra lateral solo si está abierta */}
                     {showBarraLateral && (
-                        <BarraLateral isDarkMode={isDarkMode} onLogout={onLogout} onClose={() => setShowBarraLateral(false)} />
+                        <BarraLateral
+                            isDarkMode={isDarkMode}
+                            onLogout={onLogout}
+                            onClose={() => setShowBarraLateral(false)}
+                        />
                     )}
                 </>
             )}

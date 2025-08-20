@@ -44,14 +44,6 @@
     transform: scale(1.1);
 }
 
-.categoria-actions .edit-button {
-    color: green;
-}
-
-.categoria-actions .delete-button {
-    color: red;
-}
-
 .cuenta-nombre {
     width: 100%;
     text-align: center;
