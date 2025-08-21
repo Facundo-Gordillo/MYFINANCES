@@ -47,10 +47,12 @@
 .transacciones-container {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
+    box-sizing: border-box;
     align-items: center;
-    width: 100%;
+    justify-content: flex-start;
+    gap: 1rem;
+    margin: 1rem auto;
+    width: 400px;
 }
 
 .transaccion {
@@ -63,8 +65,7 @@
     border: 2px solid var(--primary-color);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     font-size: 0.95rem;
-    width: 500px;
-    max-width: 90%;
+    width: 100%;
     box-sizing: border-box;
     gap: 0.5rem;
 }
@@ -82,10 +83,11 @@
 .descripcion-wrapper {
     display: flex;
     align-items: center;
-    flex: 1 1 auto;
+    flex: 1;
     min-width: 0;
     overflow: hidden;
-    max-width: 70%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     gap: 0.5rem;
     min-width: 0;
 }
@@ -138,14 +140,14 @@
 
 
 @media (max-width: 768px) {
-    .transaccion {
-        width: 90%;
-        justify-content: space-between;
-    }
+  .transacciones-container {
+    max-width: 400px;
+    margin: 1rem auto;
+    align-items: center;
+  }
 
-    .monto,
-    .delete-button {
-        flex-shrink: 0;
-        margin-left: 0.5rem;
-    }
+  .transaccion {
+    width: 100%;
+    max-width: 400px;
+  }
 }
