@@ -141,13 +141,11 @@
 
 @media (max-width: 768px) {
   .transacciones-container {
-    max-width: 400px;
     margin: 1rem auto;
     align-items: center;
   }
 
   .transaccion {
-    width: 100%;
-    max-width: 400px;
+    width: 90%;
   }
 }
