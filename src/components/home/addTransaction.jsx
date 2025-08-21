@@ -8,7 +8,6 @@ function AddTransaction({ onCancel }) {
 
     // Estado Firebase
     const [db, setDb] = useState(null);
-    const [auth, setAuth] = useState(null);
     const [userId, setUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 

@@ -121,7 +121,15 @@
 }
 
 
+.filters-section {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
 
+#cuentaHome {
+    width: 6rem;
+}
 
 
 @media (max-width: 768px) {
@@ -129,8 +137,9 @@
         width: 10%;
         justify-content: flex-start;
     }
-    
-    .monto, .delete-button {
+
+    .monto,
+    .delete-button {
         flex-shrink: 0;
         margin-left: 0.5rem;
     }

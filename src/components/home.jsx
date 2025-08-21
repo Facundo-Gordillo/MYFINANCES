@@ -5,8 +5,8 @@ import AddTransaction from "./home/addTransaction.jsx";
 import BarraLateral from "./home/barraLateral.jsx";
 
 import appFirebase from "../firebaseConfig";
-import { getFirestore, collection, query, orderBy, onSnapshot, doc, deleteDoc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getFirestore, collection, query, orderBy, onSnapshot, doc, deleteDoc, getDocs } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 const db = getFirestore(appFirebase);
@@ -27,6 +27,10 @@ const BarraLateralButton = ({ onClick }) => (
 
 // Icono Dark/Light mode
 const ThemeToggleIcon = ({ isDarkMode }) => (isDarkMode ? <Sun color="orange" /> : <Moon />);
+
+
+
+
 
 function Home({ onLogout }) {
     // Dark Mode state
@@ -52,6 +56,39 @@ function Home({ onLogout }) {
 
     // Estado de transacciones
     const [transacciones, setTransacciones] = useState([]);
+
+
+
+    // Estados para cuentas
+    const [cuentas, setCuentas] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // cargar cuentas
+    useEffect(() => {
+        const firestoreDb = getFirestore(appFirebase);
+        const firebaseAuth = getAuth(appFirebase);
+
+        const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
+            if (user) {
+                try {
+                    const cuentasRef = collection(firestoreDb, `users/${user.uid}/cuentas`);
+                    const snapshot = await getDocs(cuentasRef);
+                    const cuentasData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    setCuentas(cuentasData);
+                } catch (error) {
+                    console.error("Error al obtener cuentas:", error);
+                }
+            } else {
+                setCuentas([]);
+            }
+            setIsLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+
+
 
 
 
@@ -138,6 +175,31 @@ function Home({ onLogout }) {
 
 
                     <main className="home-main">
+
+                        {/* Mostrar cuentas */}
+                        <section className="filters-section">
+                            {isLoading ? (
+                                <p>Cargando cuentas...</p>
+                            ) : cuentas.length === 0 ? (
+                                <p>No tienes cuentas registradas.</p>
+                            ) : (
+                                <select id="cuentaHome" name="cuentaHome" className="form-select" defaultValue="">
+                                    {/* Opción default */}
+                                    <option value="todas">Todas</option>
+
+                                    {/* Opción para mostrar las cuentas disponibles */}
+                                    {cuentas.map(c => (
+                                        <option key={c.id} value={c.id}>
+                                            {c.nombre}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+                        </section>
+
+
+
+                        {/* Mostrar transacciones */}
                         {transacciones.length === 0 ? (
                             <p>No hay transacciones todavía.</p>
                         ) : (
