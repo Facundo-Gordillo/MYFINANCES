@@ -8,6 +8,7 @@ import appFirebase from "../firebaseConfig";
 import { getFirestore, collection, query, orderBy, onSnapshot, doc, deleteDoc, getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
+import PieChartCategorias from "./home/pieChart.jsx";
 
 const db = getFirestore(appFirebase);
 
@@ -192,6 +193,14 @@ function Home({ onLogout }) {
 
 
                     <main className="home-main">
+                        {/* grafico de tortas */}
+                        <section>
+                            <PieChartCategorias
+                                transacciones={transacciones}
+                                cuentaSeleccionadaId={selectedCuenta}
+                                categorias={categorias}
+                            />
+                        </section>
 
                         {/* Mostrar cuentas */}
                         <section className="filters-section">

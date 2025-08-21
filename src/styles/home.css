@@ -1,4 +1,11 @@
 /* ESTILOS GENERALES */
+.home-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .floating-button {
     position: fixed;
     display: inline-flex;
