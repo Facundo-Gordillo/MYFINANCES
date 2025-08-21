@@ -50,6 +50,7 @@ function Home({ onLogout }) {
 
     const toggleDarkMode = () => setIsDarkMode((prev) => !prev);
 
+
     // Estados AddTransaction y Barra Lateral
     const [showAddTransaction, setShowAddTransaction] = useState(false);
     const [showBarraLateral, setShowBarraLateral] = useState(false);
@@ -58,10 +59,25 @@ function Home({ onLogout }) {
     const [transacciones, setTransacciones] = useState([]);
 
 
+    // **********************************************************************
+    // FILTRO CUENTAS
+
 
     // Estados para cuentas
     const [cuentas, setCuentas] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedCuenta, setSelectedCuenta] = useState("todas");
+
+    const handleCuentaChange = (e) => {
+        setSelectedCuenta(e.target.value);
+    };
+
+    const filteredTransacciones =
+        selectedCuenta === "todas"
+            ? transacciones
+            : transacciones.filter((t) => t.cuentaId === selectedCuenta);
+
+
 
     // cargar cuentas
     useEffect(() => {
@@ -86,6 +102,7 @@ function Home({ onLogout }) {
 
         return () => unsubscribe();
     }, []);
+    // **********************************************************************
 
 
 
@@ -183,12 +200,18 @@ function Home({ onLogout }) {
                             ) : cuentas.length === 0 ? (
                                 <p>No tienes cuentas registradas.</p>
                             ) : (
-                                <select id="cuentaHome" name="cuentaHome" className="form-select" defaultValue="">
+                                <select
+                                    id="cuentaHome"
+                                    name="cuentaHome"
+                                    className="form-select"
+                                    value={selectedCuenta}
+                                    onChange={handleCuentaChange}
+                                >
                                     {/* Opción default */}
                                     <option value="todas">Todas</option>
 
                                     {/* Opción para mostrar las cuentas disponibles */}
-                                    {cuentas.map(c => (
+                                    {cuentas.map((c) => (
                                         <option key={c.id} value={c.id}>
                                             {c.nombre}
                                         </option>
@@ -198,15 +221,13 @@ function Home({ onLogout }) {
                         </section>
 
 
-
                         {/* Mostrar transacciones */}
-                        {transacciones.length === 0 ? (
-                            <p>No hay transacciones todavía.</p>
+                        {filteredTransacciones.length === 0 ? (
+                            <p>No hay transacciones para esta cuenta.</p>
                         ) : (
                             <div className="transacciones-container">
-                                {transacciones.map((t) => (
+                                {filteredTransacciones.map((t) => (
                                     <div key={t.id} className={`transaccion ${t.tipo}`}>
-                                        {/* Wrapper para flag + descripción */}
                                         <div className="descripcion-wrapper">
                                             <div
                                                 className="categoria-flag"
@@ -215,12 +236,10 @@ function Home({ onLogout }) {
                                             <span className="descripcion">{t.descripcion}</span>
                                         </div>
 
-                                        {/* Monto */}
                                         <span className="monto">
                                             {t.tipo === "egreso" ? "-" : "+"}${t.monto}
                                         </span>
 
-                                        {/* Botón de borrar */}
                                         <button className="delete-button" onClick={() => handleDelete(t.id)}>
                                             <Trash2 size={20} color="red" />
                                         </button>

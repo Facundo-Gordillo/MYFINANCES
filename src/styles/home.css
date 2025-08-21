@@ -47,9 +47,10 @@
 .transacciones-container {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
     margin-top: 1rem;
     align-items: center;
+    width: 100%;
 }
 
 .transaccion {
@@ -62,11 +63,12 @@
     border: 2px solid var(--primary-color);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     font-size: 0.95rem;
-    width: 40%;
-    max-width: 100%;
+    width: 500px;
+    max-width: 90%;
     box-sizing: border-box;
     gap: 0.5rem;
 }
+
 
 .descripcion {
     flex: 1 1 auto;
@@ -83,6 +85,9 @@
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
+    max-width: 70%;
+    gap: 0.5rem;
+    min-width: 0;
 }
 
 
@@ -134,8 +139,8 @@
 
 @media (max-width: 768px) {
     .transaccion {
-        width: 10%;
-        justify-content: flex-start;
+        width: 90%;
+        justify-content: space-between;
     }
 
     .monto,
