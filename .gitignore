@@ -27,3 +27,5 @@ dist-ssr
 
 # Archivos para firebase y credenciales
 *.env
+.firebase
+dataconnect/
