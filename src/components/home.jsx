@@ -10,6 +10,9 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 import PieChartCategorias from "./home/pieChart.jsx";
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 const db = getFirestore(appFirebase);
 
 // Botón flotante para agregar transacciones
@@ -60,9 +63,11 @@ function Home({ onLogout }) {
     const [transacciones, setTransacciones] = useState([]);
 
 
+
+
+    // **********************************************************************
     // **********************************************************************
     // FILTRO CUENTAS
-
 
     // Estados para cuentas
     const [cuentas, setCuentas] = useState([]);
@@ -72,13 +77,6 @@ function Home({ onLogout }) {
     const handleCuentaChange = (e) => {
         setSelectedCuenta(e.target.value);
     };
-
-    const filteredTransacciones =
-        selectedCuenta === "todas"
-            ? transacciones
-            : transacciones.filter((t) => t.cuentaId === selectedCuenta);
-
-
 
     // cargar cuentas
     useEffect(() => {
@@ -103,10 +101,51 @@ function Home({ onLogout }) {
 
         return () => unsubscribe();
     }, []);
+
+    // [--------------]
+
+    // FILTRO FECHAS
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+
+    function FiltroFecha({ startDate, endDate, setStartDate, setEndDate }) {
+        return (
+            <DatePicker
+                selectsRange={true}
+                startDate={startDate}
+                endDate={endDate}
+                onChange={(update) => {
+                    setStartDate(update[0]);
+                    setEndDate(update[1]);
+                }}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="📅 Elegir rango"
+                className="datepicker-input"
+                isClearable={true}
+            />
+        );
+    }
+    
+    // [--------------]
+
+    // PROCESAR DATOS FILTRADOS:
+    const filteredTransacciones = transacciones.filter((t) => {
+        const fecha = t.timestamp?.toDate ? t.timestamp.toDate() : new Date(t.timestamp);
+
+        const dentroDeCuenta =
+            selectedCuenta === "todas" || t.cuentaId === selectedCuenta;
+
+        const dentroDeRango =
+            (!startDate || fecha >= startDate) &&
+            (!endDate || fecha <= endDate);
+
+        return dentroDeCuenta && dentroDeRango;
+    });
+
+
+
     // **********************************************************************
-
-
-
+    // **********************************************************************
 
 
 
@@ -202,32 +241,49 @@ function Home({ onLogout }) {
                             />
                         </section>
 
-                        {/* Mostrar cuentas */}
+                        {/* filtros */}
                         <section className="filters-section">
                             {isLoading ? (
-                                <p>Cargando cuentas...</p>
+                                <p>Cargando datos...</p>
                             ) : cuentas.length === 0 ? (
-                                <p>No tienes cuentas registradas.</p>
+                                <p>No tienes datos registrados.</p>
                             ) : (
-                                <select
-                                    id="cuentaHome"
-                                    name="cuentaHome"
-                                    className="form-select"
-                                    value={selectedCuenta}
-                                    onChange={handleCuentaChange}
-                                >
-                                    {/* Opción default */}
-                                    <option value="todas">Todas</option>
+                                <>
+                                    {/* cargar cuentas para filtro de cuentas */}
+                                    <select
+                                        id="cuentaHome"
+                                        name="cuentaHome"
+                                        className="form-select"
+                                        value={selectedCuenta}
+                                        onChange={handleCuentaChange}
+                                    >
+                                        {/* Opción default */}
+                                        <option value="todas">Todas</option>
 
-                                    {/* Opción para mostrar las cuentas disponibles */}
-                                    {cuentas.map((c) => (
-                                        <option key={c.id} value={c.id}>
-                                            {c.nombre}
-                                        </option>
-                                    ))}
-                                </select>
+                                        {/* Opción para mostrar las cuentas disponibles */}
+                                        {cuentas.map((c) => (
+                                            <option key={c.id} value={c.id}>
+                                                {c.nombre}
+                                            </option>
+                                        ))}
+                                    </select>
+
+
+
+                                    {/* Filtros de fecha */}
+                                    <div className="date-filters">
+                                        {/* Calendario de rango */}
+                                        <FiltroFecha
+                                            startDate={startDate}
+                                            endDate={endDate}
+                                            setStartDate={setStartDate}
+                                            setEndDate={setEndDate}
+                                        />
+                                    </div>
+                                </>
                             )}
                         </section>
+
 
 
                         {/* Mostrar transacciones */}

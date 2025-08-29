@@ -135,24 +135,43 @@
 }
 
 
+/* filtros */
 .filters-section {
     display: flex;
-    justify-content: center;
-    margin: 1rem 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 2rem;
+    width: 100%;
 }
+
+.datepicker-input {
+    padding: 10px;
+    border: 1px solid var(--primary-color);
+    background-color: transparent;
+    color: var(--text-color);
+    border-radius: 8px;
+    font-size: 14px;
+    width: 100%;
+}
+
+
+
+
 
 #cuentaHome {
     width: 6rem;
+    border-color: var(--primary-color);
 }
 
 
 @media (max-width: 768px) {
-  .transacciones-container {
-    margin: 1rem auto;
-    align-items: center;
-  }
+    .transacciones-container {
+        margin: 1rem auto;
+        align-items: center;
+    }
 
-  .transaccion {
-    width: 90%;
-  }
+    .transaccion {
+        width: 90%;
+    }
 }
