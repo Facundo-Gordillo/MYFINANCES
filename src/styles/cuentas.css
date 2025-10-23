@@ -24,13 +24,13 @@
 }
 
 .cuenta-card {
-    width: 15rem;
+    width: 60vh;
     background-color: var(--card-background-color);
     color: var(--text-color);
     border-radius: 1rem;
     padding: 1.5rem 2rem;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
     font-size: 1.3rem;
     font-weight: 500;
@@ -50,9 +50,11 @@
 
 .cuenta-monto {
     font-weight: 700;
-    padding: 0.5rem 0.5rem;
+    padding: 0.5rem 1rem;
     border-radius: 0.5rem;
-    margin-left: 1rem;
+    margin: 1.5rem;
+    text-align: center;
+    width: 10rem;
     background-color: #ff8c42;
 }
 
@@ -100,11 +102,12 @@
 /* Responsivo para mobile */
 @media (max-width: 480px) {
     .cuentas-container {
-        width: 95%;
+        width: 100%;
         padding: 0.5rem;
     }
 
     .cuenta-card {
+        width: 99%;
         font-size: 1.1rem;
         padding: 1rem 1.5rem;
     }
