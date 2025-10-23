@@ -165,6 +165,13 @@
 }
 
 
+
+/* Configuracion para ocultar barra lateral: */
+.barra-lateral-button {
+    display: none;
+}
+
+
 @media (max-width: 768px) {
     .transacciones-container {
         margin: 1rem auto;
@@ -173,5 +180,10 @@
 
     .transaccion {
         width: 90%;
+    }
+
+    /* Mostrar boton barra lateral cuando es mobile: */
+    .barra-lateral-button {
+        display: inline-flex;
     }
 }
