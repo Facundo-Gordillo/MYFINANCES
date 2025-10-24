@@ -1,12 +1,14 @@
 /* Contenedor principal de categorías */
 .categoria-container {
     display: flex;
-    flex-wrap: wrap; /* Permite que las tarjetas se distribuyan en varias filas */
+    flex-wrap: wrap;
+    /* Permite que las tarjetas se distribuyan en varias filas */
     gap: 1rem;
     width: 90%;
     max-width: 1100px;
     margin: 1rem auto;
-    justify-content: center; /* Centra las tarjetas cuando no llenan la fila */
+    justify-content: center;
+    /* Centra las tarjetas cuando no llenan la fila */
     box-sizing: border-box;
 }
 
@@ -16,8 +18,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    min-width: 250px; /* Anchura mínima para cada tarjeta */
-    flex: 1 1 250px; /* Permite que las tarjetas crezcan y se ajusten */
+    min-width: 250px;
+    /* Anchura mínima para cada tarjeta */
+    flex: 1 1 250px;
+    /* Permite que las tarjetas crezcan y se ajusten */
     box-sizing: border-box;
 }
 
@@ -25,15 +29,21 @@
 .categoria-card {
     flex: 1;
     border-radius: 1rem;
-    padding: 1rem 1.5rem;
+    padding: 1.2rem 2rem;
     color: #fff;
     box-shadow: 0 4px 8px var(--box-shadow-color);
     display: flex;
     align-items: center;
-    justify-content: center; /* Centrado del nombre */
+    justify-content: center;
+    /* Centrado vertical y horizontal del nombre */
     min-width: 0;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    text-align: center;
     transition: transform 0.2s;
+    height: 200px;
+    /* Asegura un tamaño consistente para las tarjetas */
+    overflow: hidden;
+    /* Prevé que el texto largo se salga de la tarjeta */
 }
 
 .categoria-card:hover {
@@ -66,6 +76,8 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-weight: 600;
+    font-size: 1.1rem;
 }
 
 /* MOBILE */
@@ -78,6 +90,8 @@
     .categoria-card {
         padding: 0.75rem 1rem;
         font-size: 0.95rem;
+        height: auto;
+        /* Ajustar altura para móvil */
     }
 
     .categoria-actions {
@@ -92,16 +106,21 @@
     }
 
     .categoria-wrapper {
-        flex: 1 1 45%; /* Dos tarjetas por fila */
+        flex: 1 1 45%;
+        /* Dos tarjetas por fila */
     }
 
     .categoria-card {
         padding: 1rem 1.5rem;
         font-size: 1.05rem;
+        height: 180px;
+        /* Ajustar altura para tablet */
     }
 
     .categoria-actions {
         gap: 0.7rem;
+        flex-direction: column;
+        align-items: center;
     }
 }
 
@@ -112,15 +131,20 @@
     }
 
     .categoria-wrapper {
-        flex: 1 1 30%; /* Tres tarjetas por fila */
+        flex: 1 1 30%;
+        /* Tres tarjetas por fila */
     }
 
     .categoria-card {
         padding: 1.2rem 2rem;
         font-size: 1.1rem;
+        height: 200px;
+        /* Altura constante en desktop */
     }
 
     .categoria-actions {
         gap: 1rem;
+        flex-direction: column;
+        align-items: center;
     }
 }
