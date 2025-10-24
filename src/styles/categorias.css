@@ -1,11 +1,13 @@
 /* Contenedor principal de categorías */
 .categoria-container {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap; /* Permite que las tarjetas se distribuyan en varias filas */
     gap: 1rem;
-    width: 60vw;
-    max-width: 700px;
-    margin: 0 auto;
+    width: 90%;
+    max-width: 1100px;
+    margin: 1rem auto;
+    justify-content: center; /* Centra las tarjetas cuando no llenan la fila */
+    box-sizing: border-box;
 }
 
 /* Wrapper de cada categoría con botones de acción */
@@ -13,8 +15,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
     gap: 1rem;
+    min-width: 250px; /* Anchura mínima para cada tarjeta */
+    flex: 1 1 250px; /* Permite que las tarjetas crezcan y se ajusten */
+    box-sizing: border-box;
 }
 
 /* Tarjeta de categoría */
@@ -26,11 +30,17 @@
     box-shadow: 0 4px 8px var(--box-shadow-color);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center; /* Centrado del nombre */
     min-width: 0;
+    font-size: 1rem;
+    transition: transform 0.2s;
 }
 
-/* Acciones de la categoría (editar / eliminar) */
+.categoria-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Acciones de la categoría */
 .categoria-actions {
     display: flex;
     gap: 0.5rem;
@@ -46,27 +56,71 @@
 }
 
 .categoria-actions button:hover {
-    transform: scale(1.1);
+    transform: scale(1.2);
 }
 
-/* Nombre de la categoría centrado dentro de la tarjeta */
+/* Nombre de la categoría */
 .cuenta-nombre {
     width: 100%;
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Responsive para móviles */
+/* MOBILE */
 @media (max-width: 480px) {
     .categoria-wrapper {
-        flex-direction: row;
-        gap: 0.5rem;
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .categoria-card {
         padding: 0.75rem 1rem;
+        font-size: 0.95rem;
     }
 
     .categoria-actions {
         justify-content: flex-end;
+    }
+}
+
+/* TABLET */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .categoria-container {
+        gap: 1.2rem;
+    }
+
+    .categoria-wrapper {
+        flex: 1 1 45%; /* Dos tarjetas por fila */
+    }
+
+    .categoria-card {
+        padding: 1rem 1.5rem;
+        font-size: 1.05rem;
+    }
+
+    .categoria-actions {
+        gap: 0.7rem;
+    }
+}
+
+/* DESKTOP */
+@media (min-width: 1025px) {
+    .categoria-container {
+        gap: 1.5rem;
+    }
+
+    .categoria-wrapper {
+        flex: 1 1 30%; /* Tres tarjetas por fila */
+    }
+
+    .categoria-card {
+        padding: 1.2rem 2rem;
+        font-size: 1.1rem;
+    }
+
+    .categoria-actions {
+        gap: 1rem;
     }
 }
