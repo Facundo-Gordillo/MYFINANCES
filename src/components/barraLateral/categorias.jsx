@@ -5,17 +5,21 @@ import { getFirestore, collection, onSnapshot, deleteDoc, doc } from "firebase/f
 import '../../styles/home.css';
 import '../../styles/cuentas.css';
 import '../../styles/categorias.css';
+
 import BarraLateral from "../home/barraLateral.jsx";
 import AddCategorias from "./addCategorias.jsx";
 
-// Botón flotante para agregar categorías
+import { useBarraLateral } from "../../hooks/useBarraLateral.jsx";
+import useDarkMode from "../../hooks/useDarkMode.jsx";
+
+// Botón flotante para agregar categoría
 const AddCategoriasButton = ({ onClick }) => (
     <button className="floating-button addCentrado" id="addCategoria" onClick={onClick}>
         <Plus size={24} />
     </button>
 );
 
-// Botón para abrir barra lateral
+// Botón para abrir barra lateral (solo visible si barra cerrada y mobile)
 const BarraLateralButton = ({ onClick }) => (
     <button className="floating-button barra-lateral-button" onClick={onClick}>
         <Menu size={24} />
@@ -26,55 +30,53 @@ const BarraLateralButton = ({ onClick }) => (
 const ThemeToggleIcon = ({ isDarkMode }) => (isDarkMode ? <Sun color="orange" /> : <Moon />);
 
 function Categorias({ onLogout }) {
-    const [isDarkMode, setIsDarkMode] = useState(() => {
-        try {
-            const saved = localStorage.getItem("isDarkMode");
-            return saved ? JSON.parse(saved) : false;
-        } catch {
-            return false;
-        }
-    });
+    // Barra lateral
+    const { isOpen, openBarra, closeBarra, isDesktop, isMobile } = useBarraLateral();
 
+    // Dark mode
+    const { isDarkMode, toggleDarkMode } = useDarkMode();
+
+    // UI States
     const [showAddCategorias, setShowAddCategorias] = useState(false);
-    const [showBarraLateral, setShowBarraLateral] = useState(false);
+    const [categoriaEdit, setCategoriaEdit] = useState(null);
+
+    // Datos
     const [userId, setUserId] = useState(null);
     const [categorias, setCategorias] = useState([]);
-    const [categoriaEdit, setCategoriaEdit] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const auth = getAuth();
     const db = getFirestore();
 
-    // Dark mode toggle
+    // === Cargar categorías del usuario en tiempo real ===
     useEffect(() => {
-        localStorage.setItem("isDarkMode", JSON.stringify(isDarkMode));
-        document.body.classList.toggle("dark-mode", isDarkMode);
-    }, [isDarkMode]);
+        let unsubscribeSnapshot = null;
 
-    // Listener de autenticación y carga de categorías
-    useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUserId(user.uid);
-
                 const categoriasRef = collection(db, `users/${user.uid}/categorias`);
-                const unsubscribeSnapshot = onSnapshot(categoriasRef, (snapshot) => {
-                    const categoriasData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                unsubscribeSnapshot = onSnapshot(categoriasRef, (snapshot) => {
+                    const categoriasData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
                     setCategorias(categoriasData);
+                    setLoading(false);
                 });
-
-                return () => unsubscribeSnapshot();
             } else {
                 setUserId(null);
                 setCategorias([]);
+                setLoading(false);
             }
         });
 
-        return () => unsubscribeAuth();
-    }, [auth, db]);
+        return () => {
+            unsubscribeAuth();
+            if (unsubscribeSnapshot) unsubscribeSnapshot();
+        };
+    }, []); // Solo al montar
 
-    const toggleDarkMode = () => setIsDarkMode(prev => !prev);
-
+    // === Eliminar categoría ===
     const handleDeleteCategoria = async (categoriaId) => {
+        if (!userId) return;
         try {
             const categoriaRef = doc(db, `users/${userId}/categorias`, categoriaId);
             await deleteDoc(categoriaRef);
@@ -84,6 +86,7 @@ function Categorias({ onLogout }) {
         }
     };
 
+    // === Editar categoría ===
     const handleEditCategoria = (categoria) => {
         setCategoriaEdit(categoria);
         setShowAddCategorias(true);
@@ -116,52 +119,61 @@ function Categorias({ onLogout }) {
                         </button>
                     </header>
 
-                    {categorias.length > 0 && (
+                    {loading ? (
                         <main className="home-main">
-                            <div className="categoria-container cuentas-container">
-                                {categorias.map((categoria) => (
-                                    <div className="categoria-wrapper" key={categoria.id}>
-                                        <div
-                                            className="categoria-card cuenta-card"
-                                            style={{ backgroundColor: categoria.color || '#000000' }}
-                                        >
-                                            <span className="cuenta-nombre">{categoria.nombre}</span>
-                                        </div>
-                                        <div className="categoria-actions">
-                                            <button
-                                                className="edit-button"
-                                                onClick={() => handleEditCategoria(categoria)}
-                                                title="Editar Categoría"
+                            <p>Cargando categorías...</p>
+                        </main>
+                    ) : (
+                        <main className="home-main">
+                            {categorias.length === 0 ? (
+                                <p>No tienes categorías registradas.</p>
+                            ) : (
+                                <div className="categoria-container cuentas-container">
+                                    {categorias.map((categoria) => (
+                                        <div className="categoria-wrapper" key={categoria.id}>
+                                            <div
+                                                className="categoria-card cuenta-card"
+                                                style={{ backgroundColor: categoria.color || "#cccccc" }}
                                             >
-                                                <Pencil size={20} color="green"/>
-                                            </button>
-                                            <button
-                                                className="delete-button"
-                                                onClick={() => handleDeleteCategoria(categoria.id)}
-                                                title="Eliminar Categoría"
-                                            >
-                                                <Trash2 size={20} color="red"/>
-                                            </button>
+                                                <span className="cuenta-nombre">{categoria.nombre}</span>
+                                            </div>
+                                            <div className="categoria-actions">
+                                                <button
+                                                    className="edit-button"
+                                                    onClick={() => handleEditCategoria(categoria)}
+                                                    title="Editar Categoría"
+                                                >
+                                                    <Pencil size={20} color="green" />
+                                                </button>
+                                                <button
+                                                    className="delete-button"
+                                                    onClick={() => handleDeleteCategoria(categoria.id)}
+                                                    title="Eliminar Categoría"
+                                                >
+                                                    <Trash2 size={20} color="red" />
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            )}
                         </main>
                     )}
 
                     <AddCategoriasButton onClick={() => setShowAddCategorias(true)} />
 
-                    {!showBarraLateral && (
-                        <BarraLateralButton onClick={() => setShowBarraLateral(true)} />
-                    )}
+                    {/* Solo mostrar botón para abrir barra en mobile */}
+                    {isMobile && !isOpen && <BarraLateralButton onClick={openBarra} />}
 
-                    {showBarraLateral && (
+                    {/* Mostrar la barra cuando está abierta */}
+                    {isOpen && (
                         <BarraLateral
                             isDarkMode={isDarkMode}
                             onLogout={onLogout}
-                            onClose={() => setShowBarraLateral(false)}
+                            onClose={closeBarra}
                         />
                     )}
+
                 </>
             )}
         </div>

@@ -3,6 +3,9 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import appFirebase from './firebaseConfig.js';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
+import { useBarraLateral } from "./hooks/useBarraLateral.jsx";
+
+
 // Rutas protegidas
 import PrivateRoute from "./routes/PrivateRoute.jsx";
 import PublicRoute from "./routes/PublicRoute.jsx";
@@ -18,6 +21,21 @@ function App() {
   const auth = getAuth(appFirebase);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+
+
+  // CONFIG BARRA LATERAL GLOBAL
+  const { isDesktop } = useBarraLateral();
+  const [isBarraOpen, setIsBarraOpen] = useState(isDesktop); // abierto en desktop
+
+  useEffect(() => {
+    setIsBarraOpen(isDesktop); // si cambias de tamaño, actualizar estado
+  }, [isDesktop]);
+
+  const openBarra = () => setIsBarraOpen(true);
+  const closeBarra = () => setIsBarraOpen(false);
+
+
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {

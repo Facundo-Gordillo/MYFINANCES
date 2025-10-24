@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Moon, Sun, Plus, Menu, Pencil, Trash2 } from "lucide-react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, collection, onSnapshot, deleteDoc, doc } from "firebase/firestore";
-import '../../styles/home.css';
-import '../../styles/cuentas.css';
+import "../../styles/home.css";
+import "../../styles/cuentas.css";
+
 import BarraLateral from "../home/barraLateral.jsx";
 import AddCuentas from "./addCuentas.jsx";
+
+import { useBarraLateral } from "../../hooks/useBarraLateral.jsx";
+import useDarkMode from "../../hooks/useDarkMode.jsx";
 
 // Botón flotante para agregar cuentas
 const AddCuentasButton = ({ onClick }) => (
@@ -25,53 +29,48 @@ const BarraLateralButton = ({ onClick }) => (
 const ThemeToggleIcon = ({ isDarkMode }) => (isDarkMode ? <Sun color="orange" /> : <Moon />);
 
 function Cuentas({ onLogout }) {
-    const [isDarkMode, setIsDarkMode] = useState(() => {
-        try {
-            const saved = localStorage.getItem("isDarkMode");
-            return saved ? JSON.parse(saved) : false;
-        } catch {
-            return false;
-        }
-    });
+    const { isOpen, openBarra, closeBarra, isDesktop, isMobile } = useBarraLateral();
+    const { isDarkMode, toggleDarkMode } = useDarkMode();
 
     const [showAddCuentas, setShowAddCuentas] = useState(false);
-    const [showBarraLateral, setShowBarraLateral] = useState(false);
+    const [cuentaEdit, setCuentaEdit] = useState(null);
+
     const [userId, setUserId] = useState(null);
     const [cuentas, setCuentas] = useState([]);
-    const [cuentaEdit, setCuentaEdit] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const auth = getAuth();
     const db = getFirestore();
 
+    // === Cargar cuentas del usuario en tiempo real ===
     useEffect(() => {
-        localStorage.setItem("isDarkMode", JSON.stringify(isDarkMode));
-        document.body.classList.toggle("dark-mode", isDarkMode);
-    }, [isDarkMode]);
+        let unsubscribeSnapshot = null;
 
-    useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUserId(user.uid);
-
                 const cuentasRef = collection(db, `users/${user.uid}/cuentas`);
-                const unsubscribeSnapshot = onSnapshot(cuentasRef, (snapshot) => {
-                    const cuentasData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                unsubscribeSnapshot = onSnapshot(cuentasRef, (snapshot) => {
+                    const cuentasData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
                     setCuentas(cuentasData);
+                    setLoading(false);
                 });
-
-                return () => unsubscribeSnapshot();
             } else {
                 setUserId(null);
                 setCuentas([]);
+                setLoading(false);
             }
         });
 
-        return () => unsubscribeAuth();
-    }, [auth, db]);
+        return () => {
+            unsubscribeAuth();
+            if (unsubscribeSnapshot) unsubscribeSnapshot();
+        };
+    }, []); // Solo al montar
 
-    const toggleDarkMode = () => setIsDarkMode(prev => !prev);
-
+    // === Eliminar cuenta ===
     const handleDeleteCuenta = async (cuentaId) => {
+        if (!userId) return;
         try {
             const cuentaRef = doc(db, `users/${userId}/cuentas`, cuentaId);
             await deleteDoc(cuentaRef);
@@ -81,23 +80,24 @@ function Cuentas({ onLogout }) {
         }
     };
 
+    // === Editar cuenta ===
     const handleEditCuenta = (cuenta) => {
-        setCuentaEdit(cuenta); 
-        setShowAddCuentas(true); // Muestra el formulario de agregar en caso de que la cuenta ya exista (debe mostrarlo con datos precargados)
+        setCuentaEdit(cuenta);
+        setShowAddCuentas(true);
     };
 
     return (
         <div className="home-container">
             {showAddCuentas ? (
                 <AddCuentas
-                    cuentaEdit={cuentaEdit} // Si existe (editando) pasa la cuenta
+                    cuentaEdit={cuentaEdit}
                     onCuentaAdded={() => {
                         setShowAddCuentas(false);
-                        setCuentaEdit(null);  // Limpia la cuenta para no quedar con datos viejos
+                        setCuentaEdit(null);
                     }}
                     onCancel={() => {
                         setShowAddCuentas(false);
-                        setCuentaEdit(null);  // Limpia la cuenta al cancelar
+                        setCuentaEdit(null);
                     }}
                 />
             ) : (
@@ -113,48 +113,57 @@ function Cuentas({ onLogout }) {
                         </button>
                     </header>
 
-                    {cuentas.length > 0 && (
+                    {loading ? (
                         <main className="home-main">
-                            <div className="cuentas-container">
-                                {cuentas.map((cuenta) => (
-                                    <div className="cuenta-card" key={cuenta.id}>
-                                        <span className="cuenta-nombre">{cuenta.nombre}</span>
-                                        <span className="cuenta-monto">{cuenta.monto}</span>
-                                        <div className="cuenta-actions">
-                                            <button
-                                                className="edit-button"
-                                                onClick={() => handleEditCuenta(cuenta)}
-                                                title="Editar Cuenta"
-                                            >
-                                                <Pencil size={20} />
-                                            </button>
-                                            <button
-                                                className="delete-button"
-                                                onClick={() => handleDeleteCuenta(cuenta.id)}
-                                                title="Eliminar Cuenta"
-                                            >
-                                                <Trash2 size={20} />
-                                            </button>
+                            <p>Cargando cuentas...</p>
+                        </main>
+                    ) : (
+                        <main className="home-main">
+                            {cuentas.length === 0 ? (
+                                <p>No tienes cuentas registradas.</p>
+                            ) : (
+                                <div className="cuentas-container">
+                                    {cuentas.map((cuenta) => (
+                                        <div className="cuenta-card" key={cuenta.id}>
+                                            <span className="cuenta-nombre">{cuenta.nombre}</span>
+                                            <span className="cuenta-monto">{cuenta.monto}</span>
+                                            <div className="cuenta-actions">
+                                                <button
+                                                    className="edit-button"
+                                                    onClick={() => handleEditCuenta(cuenta)}
+                                                    title="Editar Cuenta"
+                                                >
+                                                    <Pencil size={20} color="green" />
+                                                </button>
+                                                <button
+                                                    className="delete-button"
+                                                    onClick={() => handleDeleteCuenta(cuenta.id)}
+                                                    title="Eliminar Cuenta"
+                                                >
+                                                    <Trash2 size={20} color="red" />
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            )}
                         </main>
                     )}
 
                     <AddCuentasButton onClick={() => setShowAddCuentas(true)} />
 
-                    {!showBarraLateral && (
-                        <BarraLateralButton onClick={() => setShowBarraLateral(true)} />
-                    )}
+                    {/* Solo mostrar botón para abrir barra en mobile */}
+                    {isMobile && !isOpen && <BarraLateralButton onClick={openBarra} />}
 
-                    {showBarraLateral && (
+                    {/* Mostrar la barra cuando está abierta */}
+                    {isOpen && (
                         <BarraLateral
                             isDarkMode={isDarkMode}
                             onLogout={onLogout}
-                            onClose={() => setShowBarraLateral(false)}
+                            onClose={closeBarra}
                         />
                     )}
+
                 </>
             )}
         </div>

@@ -20,6 +20,8 @@ function BarraLateral({ onClose, onLogout, isDarkMode }) {
 
 
   useEffect(() => {
+    if (window.innerWidth >= 769) return; // no cerrar en desktop
+
     function handleClickOutside(event) {
       if (barraRef.current && !barraRef.current.contains(event.target)) {
         onClose();
@@ -36,7 +38,7 @@ function BarraLateral({ onClose, onLogout, isDarkMode }) {
 
 
 
-// Logica para abrir la ruta Cuentas.
+  // Logica para abrir la ruta Cuentas.
   const handleCuentasClick = (e) => {
     e.preventDefault();
     onClose();
@@ -59,7 +61,7 @@ function BarraLateral({ onClose, onLogout, isDarkMode }) {
 
 
 
-  
+
   return (
     <div ref={barraRef} className="barra-lateral">
       <button onClick={onClose} className="cerrar-btn">Cerrar</button>
@@ -78,7 +80,7 @@ function BarraLateral({ onClose, onLogout, isDarkMode }) {
           </li>
           <li>
             <a href="#" className="sidebar-link" onClick={handleCategoriasClick}>
-              Añadir Categoría
+              Categorías
             </a>
           </li>
           <li>

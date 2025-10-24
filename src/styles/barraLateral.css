@@ -57,11 +57,7 @@
   }
 }
 
-
-
-
-
-/* Estilos para Boton de logour (porque es complicado posicionarlo en su lugar correcto utilizando las clases ya existentes) */
+/* Estilos para Boton de logout (porque es complicado posicionarlo en su lugar correcto utilizando las clases ya existentes) */
 #btn_logout {
   position: absolute;
   bottom: 1rem;
@@ -81,4 +77,76 @@
 
 #btn_logout:hover {
   background-color: var(--primary-light-color);
+}
+
+
+
+
+
+
+/* =============== DESKTOP VIEW (Navbar) =============== */
+@media (min-width: 769px) {
+  .barra-lateral {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px; /* altura tipo header */
+    background: var(--card-background-color);
+    color: var(--text-color);
+    box-shadow: 0 2px 8px var(--box-shadow-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    animation: none; /* sin slide desde la izquierda */
+    z-index: 1000;
+  }
+
+  /* Ocultar botón "Cerrar" */
+  .cerrar-btn {
+    display: none;
+  }
+
+  /* Menú principal en línea */
+  .sidebar-nav {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .sidebar-menu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2rem;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Links de navegación horizontales */
+  .sidebar-link {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .sidebar-link:hover {
+    color: var(--primary-light-color);
+  }
+
+  /* Logout se mantiene al final */
+  #btn_logout {
+    position: static;
+    margin-left: auto;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  #btn_logout:hover {
+    background-color: var(--primary-light-color);
+  }
 }
