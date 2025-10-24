@@ -1,3 +1,7 @@
+.home-container {
+    width: 100vh;
+}
+
 .home-main {
     display: flex;
     flex-direction: column;
