@@ -1,10 +1,10 @@
-/* ESTILOS GENERALES */
 .home-main {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     width: 100%;
+    height: auto;
     padding: 1rem;
     gap: 1rem;
     box-sizing: border-box;
@@ -49,7 +49,6 @@
     transform: scale(1.05);
 }
 
-/* ESTILOS PARA TRANSACCIONES */
 .home-title {
     margin-top: 3rem;
     font-size: 1.8rem;
@@ -72,7 +71,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 95%;
+    width: 100%;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     background: transparent;
@@ -132,13 +131,13 @@
     font-size: 1rem;
 }
 
-/* FILTROS */
 .filters-section {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
     padding: 0 0.5rem;
+    box-sizing: border-box;
 }
 
 .datepicker-input {
@@ -156,10 +155,10 @@
     border-color: var(--primary-color);
 }
 
-/* MOBILE: hasta 768px */
 @media (max-width: 768px) {
     .transacciones-container {
-        width: 95%;
+        width: 100%;
+        max-width: 100%;
         gap: 0.8rem;
     }
 
@@ -169,7 +168,13 @@
 
     .filters-section {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .filters-section .datepicker-input,
+    .filters-section #cuentaHome {
+        width: 100%;
     }
 
     .barra-lateral-button {
@@ -177,11 +182,10 @@
     }
 }
 
-/* TABLET: 769px a 1024px */
 @media (min-width: 769px) and (max-width: 1024px) {
     .transacciones-container {
-        width: 90%;
-        max-width: 720px;
+        width: 100%;
+        max-width: 80%;
         gap: 1rem;
     }
 
@@ -194,16 +198,21 @@
     .filters-section {
         flex-direction: row;
         justify-content: flex-start;
-        gap: 1.5rem;
+        gap: 1rem;
         flex-wrap: wrap;
     }
 
+    .filters-section .datepicker-input,
+    .filters-section #cuentaHome {
+        width: 48%;
+        margin-bottom: 0.5rem;
+    }
+
     .barra-lateral-button {
-        display: inline-flex; /* mantener la funcionalidad */
+        display: inline-flex;
     }
 }
 
-/* DESKTOP: desde 1025px */
 @media (min-width: 1025px) {
     .barra-lateral-button {
         display: none !important;
