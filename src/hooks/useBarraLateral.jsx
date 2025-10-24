@@ -12,8 +12,8 @@ export function useBarraLateral() {
   }, []);
 
   // Definir breakpoints
-  const isDesktop = windowWidth > 1024; // Desktop
-  const isMobile = windowWidth <= 1024; // Mobile y tablet
+  const isDesktop = windowWidth >= 1024; // Desktop >= 1024px
+  const isMobile = windowWidth < 1024;   // Mobile/Tablet < 1024px
 
   // Forzar barra abierta en desktop
   const isOpen = isDesktop ? true : isOpenMobile;

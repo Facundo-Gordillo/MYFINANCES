@@ -49,6 +49,7 @@
 /* ESTILOS PARA TRANSACCIONES */
 .home-title {
     margin-top: 3.5rem;
+    text-align: center;
 }
 
 .transacciones-container {
@@ -96,7 +97,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     gap: 0.5rem;
-    min-width: 0;
 }
 
 
@@ -127,7 +127,6 @@
     margin-left: 0.5rem;
 }
 
-
 .monto {
     flex-shrink: 0;
     margin-left: 0.5rem;
@@ -155,16 +154,15 @@
     width: 100%;
 }
 
-
-
-
-
 #cuentaHome {
     width: 6rem;
     border-color: var(--primary-color);
 }
 
 
+/* ################################### BREAKPOINTS ################################### */
+
+/* MOBILE: hasta 768px */
 @media (max-width: 768px) {
     .transacciones-container {
         margin: 1rem auto;
@@ -175,40 +173,53 @@
         width: 90%;
     }
 
-    /* Mostrar boton barra lateral cuando es mobile: */
+    /* Mostrar boton barra lateral cuando es mobile */
     .barra-lateral-button {
         display: inline-flex;
     }
 }
 
-/* ############################### DESKTOP ############################### */
+/* TABLET: entre 769px y 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .transacciones-container {
+        margin: 1rem auto;
+        align-items: center;
+    }
 
-/* Configuracion para ocultar barra lateral: */
-@media (min-width: 769px) {
+    .transaccion {
+        width: 80%;
+    }
+
+    /* Mostrar boton barra lateral en tablet como mobile */
     .barra-lateral-button {
-        display: none !important;
+        display: inline-flex;
     }
 }
 
-/* colocar el botón de modo oscuro arriba de la barra ======== */
-@media (min-width: 769px) {
-  .dark-mode-toggle {
-    position: fixed;
-    top: 10px;
-    right: 20px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 1200;
-    transition: transform 0.2s ease;
-  }
+/* DESKTOP: desde 1025px */
+@media (min-width: 1025px) {
+    .barra-lateral-button {
+        display: none !important;
+    }
 
-  .dark-mode-toggle:hover {
-    transform: scale(1.15);
-  }
+    /* colocar el botón de modo oscuro arriba de la barra */
+    .dark-mode-toggle {
+        position: fixed;
+        top: 10px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        z-index: 1200;
+        transition: transform 0.2s ease;
+    }
 
-  /* Ajustar el header para que no oculte el botón */
-  .home-header {
-    padding-top: 3rem; /* da espacio arriba para el icono */
-  }
+    .dark-mode-toggle:hover {
+        transform: scale(1.15);
+    }
+
+    /* Ajustar el header para que no oculte el botón */
+    .home-header {
+        padding-top: 3rem; /* da espacio arriba para el icono */
+    }
 }
