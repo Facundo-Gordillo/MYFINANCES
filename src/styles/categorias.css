@@ -15,7 +15,7 @@
 /* Wrapper de cada categoría con botones de acción */
 .categoria-wrapper {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     gap: 1rem;
     min-width: 250px;
@@ -35,15 +35,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Centrado vertical y horizontal del nombre */
     min-width: 0;
     font-size: 1.1rem;
     text-align: center;
     transition: transform 0.2s;
-    height: 200px;
-    /* Asegura un tamaño consistente para las tarjetas */
+    min-height: 200px;
     overflow: hidden;
-    /* Prevé que el texto largo se salga de la tarjeta */
 }
 
 .categoria-card:hover {
@@ -91,7 +88,6 @@
         padding: 0.75rem 1rem;
         font-size: 0.95rem;
         height: auto;
-        /* Ajustar altura para móvil */
     }
 
     .categoria-actions {
