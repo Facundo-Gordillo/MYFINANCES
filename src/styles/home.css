@@ -50,8 +50,8 @@
 }
 
 .floating-button:hover {
-    background-color: var(--primary-light-color);
     transform: scale(1.1);
+    background-color: #ff856f;
 }
 
 .floating-button:active {

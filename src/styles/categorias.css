@@ -1,146 +1,175 @@
-/* Contenedor principal de categorías */
+/* === Contenedor principal === */
 .categoria-container {
-    display: flex;
-    flex-wrap: wrap;
-    /* Permite que las tarjetas se distribuyan en varias filas */
-    gap: 1rem;
-    width: 90%;
-    max-width: 1100px;
-    margin: 1rem auto;
-    justify-content: center;
-    /* Centra las tarjetas cuando no llenan la fila */
-    box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 90%;
+  max-width: 1100px;
+  margin: 1rem auto;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
-/* Wrapper de cada categoría con botones de acción */
+/* === Wrapper de cada card + acciones === */
 .categoria-wrapper {
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    gap: 1rem;
-    min-width: 250px;
-    /* Anchura mínima para cada tarjeta */
-    flex: 1 1 250px;
-    /* Permite que las tarjetas crezcan y se ajusten */
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 220px;
+  flex: 1 1 220px;
+  box-sizing: border-box;
 }
 
-/* Tarjeta de categoría */
+/* === Tarjeta de categoría === */
 .categoria-card {
-    flex: 1;
-    border-radius: 1rem;
-    padding: 1.2rem 2rem;
-    color: #fff;
-    box-shadow: 0 4px 8px var(--box-shadow-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    font-size: 1.1rem;
-    text-align: center;
-    transition: transform 0.2s;
-    min-height: 200px;
-    overflow: hidden;
+  width: 100%;
+  border-radius: 1rem;
+  padding: 1.2rem 1.5rem;
+  font-size: 1.1rem;
+  text-align: center;
+  transition: transform 0.2s, background 0.3s;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: #222;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .categoria-card:hover {
-    transform: translateY(-2px);
-}
-
-/* Acciones de la categoría */
-.categoria-actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-shrink: 0;
-}
-
-.categoria-actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    transition: transform 0.2s;
-}
-
-.categoria-actions button:hover {
-    transform: scale(1.2);
+  transform: translateY(-3px);
+  filter: brightness(1.05);
 }
 
 /* Nombre de la categoría */
 .cuenta-nombre {
-    width: 100%;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: 600;
-    font-size: 1.1rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* MOBILE */
+/* Barra de acciones (editar / eliminar) */
+.categoria-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.categoria-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.categoria-actions button:hover {
+  transform: scale(1.2);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* === Dark Mode === */
+body.dark-mode .categoria-card {
+  color: #f5f5f5;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .categoria-actions button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.categoria-card.light {
+  color: #222;
+  background: #fff;
+}
+
+body.dark-mode .categoria-card.light {
+  background: #444;
+  color: #fff;
+}
+
+/* === Botones flotantes === */
+.floating-button {
+  border: none;
+  border-radius: 50%;
+  width: 3.2rem;
+  height: 3.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.3s;
+  z-index: 999;
+}
+
+.floating-button:hover {
+  transform: scale(1.1);
+}
+
+/* Botón lateral */
+.barra-lateral-button {
+  left: 1.5rem;
+}
+
+/* === Responsive === */
+
+/* Mobile */
 @media (max-width: 480px) {
-    .categoria-wrapper {
-        flex-direction: column;
-        align-items: stretch;
-    }
+  .categoria-wrapper {
+    flex: 1 1 100%;
+  }
 
-    .categoria-card {
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        height: auto;
-    }
+  .categoria-card {
+    min-height: 140px;
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+  }
 
-    .categoria-actions {
-        justify-content: flex-end;
-    }
+  .categoria-actions {
+    gap: 0.4rem;
+  }
 }
 
-/* TABLET */
+/* Tablet */
 @media (min-width: 481px) and (max-width: 1024px) {
-    .categoria-container {
-        gap: 1.2rem;
-    }
+  .categoria-wrapper {
+    flex: 1 1 45%;
+  }
 
-    .categoria-wrapper {
-        flex: 1 1 45%;
-        /* Dos tarjetas por fila */
-    }
+  .categoria-card {
+    min-height: 160px;
+    padding: 1.1rem 1.5rem;
+    font-size: 1.05rem;
+  }
 
-    .categoria-card {
-        padding: 1rem 1.5rem;
-        font-size: 1.05rem;
-        height: 180px;
-        /* Ajustar altura para tablet */
-    }
+  .floating-button {
+    bottom: 2rem;
+    right: 4rem;
+  }
 
-    .categoria-actions {
-        gap: 0.7rem;
-        flex-direction: column;
-        align-items: center;
-    }
 }
 
-/* DESKTOP */
+/* Desktop */
 @media (min-width: 1025px) {
-    .categoria-container {
-        gap: 1.5rem;
-    }
+  .categoria-wrapper {
+    flex: 1 1 30%;
+  }
 
-    .categoria-wrapper {
-        flex: 1 1 30%;
-        /* Tres tarjetas por fila */
-    }
+  .categoria-card {
+    min-height: 180px;
+    padding: 1.2rem 1.5rem;
+    font-size: 1.1rem;
+  }
 
-    .categoria-card {
-        padding: 1.2rem 2rem;
-        font-size: 1.1rem;
-        height: 200px;
-        /* Altura constante en desktop */
-    }
-
-    .categoria-actions {
-        gap: 1rem;
-        flex-direction: column;
-        align-items: center;
-    }
+  .floating-button {
+    position: fixed;
+    bottom: 3rem;
+    right: 20rem;
+  }
 }
