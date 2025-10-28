@@ -16,6 +16,7 @@ import Register from './components/register.jsx';
 import Home from './components/home.jsx';
 import Cuentas from "./components/barraLateral/cuentas.jsx";
 import Categorias from './components/barraLateral/categorias.jsx';
+import ResumenCategorias from './components/barraLateral/resumenCategorias.jsx';
 
 function App() {
   const auth = getAuth(appFirebase);
@@ -96,6 +97,14 @@ function App() {
           element={
             <PrivateRoute user={user}>
               <Categorias onLogout={handleLogout} />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/resumenes"
+          element={
+            <PrivateRoute user={user}>
+              <ResumenCategorias onLogout={handleLogout} />
             </PrivateRoute>
           }
         />

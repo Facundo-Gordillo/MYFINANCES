@@ -52,6 +52,13 @@ function BarraLateral({ onClose, onLogout, isDarkMode }) {
     navigate("/categorias");
   };
 
+  // Logica para abrir la ruta Categorias.
+  const handleCResumenesClick = (e) => {
+    e.preventDefault();
+    onClose();
+    navigate("/resumenes");
+  };
+
   // Logica para cerrar la barra si se hace click fuera de ella.
   const handleHomeClick = (e) => {
     e.preventDefault();
@@ -81,6 +88,11 @@ function BarraLateral({ onClose, onLogout, isDarkMode }) {
           <li>
             <a href="#" className="sidebar-link" onClick={handleCategoriasClick}>
               Categorías
+            </a>
+          </li>
+          <li>
+            <a href="#" className="sidebar-link" onClick={handleCResumenesClick}>
+              Resúmenes
             </a>
           </li>
           <li>
