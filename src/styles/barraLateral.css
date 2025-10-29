@@ -85,7 +85,7 @@
 
 
 /* =============== DESKTOP VIEW (Navbar) =============== */
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .barra-lateral {
     position: fixed;
     top: 0;
