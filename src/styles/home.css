@@ -1,5 +1,5 @@
 .home-container {
-    width: 100vh;
+    width: 100vw;
 }
 
 .home-main {
@@ -8,39 +8,35 @@
     align-items: center;
     justify-content: flex-start;
     width: 100%;
-    /* 100% para que tome todo el ancho disponible */
     height: auto;
     padding: 1rem;
     gap: 1rem;
     box-sizing: border-box;
-}
-
-.floating-button {
-    position: fixed;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 10vw;
-    /* En lugar de un valor fijo, se usa vw para que se adapte a la pantalla */
-    height: 10vw;
-    max-width: 60px;
-    /* Se agrega max-width para no hacerlo muy grande en pantallas grandes */
-    max-height: 60px;
-    /* Se agrega max-height para no hacerlo muy grande en pantallas grandes */
-    border-radius: 50%;
-    cursor: pointer;
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    border: none;
-    box-shadow: 0 4px 8px var(--box-shadow-color);
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    z-index: 1000;
+    width: 100%;
 }
 
 .add-transaction-button {
-    bottom: 2rem;
-    right: 2rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    border-radius: 50%;
+    z-index: 1000;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
 }
+
+.add-transaction-button:hover {
+    transform: scale(1.1);
+    background-color: #ff856f;
+}
+
+.floating-button {
+    color: var(--text-color);
+}
+
 
 .barra-lateral-button {
     top: 1rem;
@@ -49,23 +45,12 @@
     background-color: transparent;
 }
 
-.floating-button:hover {
-    transform: scale(1.1);
-    background-color: #ff856f;
-}
-
-.floating-button:active {
-    background-color: var(--primary-light-color);
-    transform: scale(1.05);
-}
-
 .home-title {
     margin-top: 3rem;
     font-size: 1.8rem;
     font-weight: 600;
     text-align: center;
     width: 100%;
-    /* Hace que el título ocupe el 100% del ancho disponible */
 }
 
 .transacciones-container {
@@ -74,9 +59,7 @@
     align-items: center;
     gap: 0.8rem;
     width: 100%;
-    /* El contenedor de las transacciones ocupa el 100% */
     max-width: 100%;
-    /* Se asegura de no exceder el ancho de la pantalla */
     margin: 1rem auto;
 }
 
@@ -85,7 +68,6 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    /* La transacción ocupa todo el ancho disponible */
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     background: transparent;
@@ -150,8 +132,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    width: 100%;
-    /* Los filtros ocupan el 100% del ancho */
+    width: 70%;
     padding: 0 0.5rem;
     box-sizing: border-box;
     margin-top: 1.5rem;
@@ -170,9 +151,7 @@
 
 #cuentaHome {
     width: 100%;
-    /* El filtro de cuenta ocupa el 100% */
     max-width: 200px;
-    /* Se le pone un máximo para evitar que crezca demasiado en pantallas grandes */
     border-color: var(--primary-color);
 }
 
@@ -196,7 +175,6 @@
     .filters-section .datepicker-input,
     .filters-section #cuentaHome {
         width: 100%;
-        /* Los filtros ocupan el 100% en móvil */
     }
 
     .barra-lateral-button {
@@ -205,12 +183,11 @@
 
     .add-transaction-button {
         position: fixed;
-        left: 0;
-        right: 0;
-        margin: 0 auto;
         bottom: 1.5rem;
-        width: 50px;
-        height: 50px;
+        left: calc(50% - 30px);
+        right: auto;
+        width: 50px !important;
+        height: 50px !important;
     }
 }
 
@@ -259,6 +236,13 @@
         cursor: pointer;
         z-index: 1200;
         transition: transform 0.2s ease;
+    }
+
+    .add-transaction-button {
+        bottom: 2rem !important;
+        right: 2rem !important;
+        width: 53px !important;
+        height: 53px !important;
     }
 }
 
@@ -312,5 +296,12 @@
         flex-direction: row;
         justify-content: flex-start;
         gap: 2rem;
+    }
+
+    .add-transaction-button {
+        bottom: 2rem !important;
+        right: 1.5rem !important;
+        width: 65px !important;
+        height: 65px !important;
     }
 }
