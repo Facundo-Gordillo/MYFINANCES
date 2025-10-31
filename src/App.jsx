@@ -32,11 +32,6 @@ function App() {
     setIsBarraOpen(isDesktop); // si cambias de tamaño, actualizar estado
   }, [isDesktop]);
 
-  const openBarra = () => setIsBarraOpen(true);
-  const closeBarra = () => setIsBarraOpen(false);
-
-
-
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
