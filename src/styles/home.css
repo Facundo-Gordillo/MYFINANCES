@@ -249,6 +249,17 @@
     .barra-lateral-button {
         display: inline-flex;
     }
+
+    .dark-mode-toggle {
+        position: fixed;
+        top: 10px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        z-index: 1200;
+        transition: transform 0.2s ease;
+    }
 }
 
 @media (min-width: 1025px) {
