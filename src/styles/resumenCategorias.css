@@ -6,8 +6,7 @@
   background: var(--bg-color, #ffffff);
   border-radius: 1rem;
   box-shadow: 0 4px 12px var(--box-shadow-color, rgba(0, 0, 0, 0.1));
-  padding: 1.5rem;
-  margin: 1.5rem auto;
+  margin-top: 4.5rem;
   width: 90%;
   max-width: 600px;
   transition: background 0.3s ease, color 0.3s ease;
